@@ -1,0 +1,31 @@
+{
+  "name": "mvvm-project",
+  "version": "1.0.0",
+  "description": "A project implementing the MVVM pattern.",
+  "main": "src/app.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/app.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^6.6.3"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.4",
+    "ts-node": "^10.4.0",
+    "nodemon": "^2.0.12"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/mvvm-project.git"
+  },
+  "keywords": [
+    "MVVM",
+    "TypeScript",
+    "Node.js"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

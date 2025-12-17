@@ -6,26 +6,23 @@ PetCare is a React Native application designed to help users manage and interact
 ## Project Structure
 ```
 petcare-app
-├── src
-│   ├── screens
-│   │   ├── HomeScreen.tsx
-│   │   ├── PetDetailsScreen.tsx
-│   │   └── SettingsScreen.tsx
-│   ├── components
-│   │   ├── PetCard.tsx
-│   │   ├── Header.tsx
-│   │   └── Footer.tsx
-│   ├── navigation
-│   │   └── RootNavigator.tsx
-│   ├── services
-│   │   └── api.ts
-│   ├── store
-│   │   ├── actions.ts
-│   │   ├── reducers.ts
-│   │   └── store.ts
-│   ├── types
-│   │   └── index.ts
-│   └── App.tsx
+├──src/
+│   ├── view/             # Interface do usuário
+│   │   ├── components/   # Componentes reutilizáveis
+│   │   └── screens/      # Telas
+│   ├── viewmodel/        # ViewModels (estado e comandos da UI)
+│   ├── usecase/          # Casos de uso (regras de negócio)
+│   ├── model/            # Domínio
+│   │   ├── entities/     # Entidades (User, Appointment)
+│   │   ├── repositories/
+│   │   ├── services/     # Interfaces de serviços
+│   │   │   └── supabase/
+│   │   └── errors/       # Erros de domínio
+│   ├── infra/            # Implementações concretas
+│   │   ├── repostories/  # Firebase Auth + Firestore
+│   │   └── services/     # Expo Notifications
+│   ├── navigation/
+│   └── di/               # Injeção de dependências
 ├── package.json
 ├── tsconfig.json
 ├── app.json

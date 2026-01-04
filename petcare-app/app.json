@@ -3,11 +3,9 @@
   "displayName": "PetCare",
   "version": "1.0.0",
   "expo": {
-    "sdkVersion": "48.0.0",
+    "sdkVersion": "54.0.0",
     "platforms": ["ios", "android"],
-    "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -22,7 +20,6 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       }
     }

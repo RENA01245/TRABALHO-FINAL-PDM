@@ -1,18 +1,12 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
 import RootNavigator from './navigation/RootNavigator';
-import rootReducer from './store/reducers';
-import { store } from './store/store';
+import { CartProvider } from './context/CartContext';
 
 const App = () => {
   return (
-    <Provider store={store}>
-      <NavigationContainer>
+    <CartProvider>
         <RootNavigator />
-      </NavigationContainer>
-    </Provider>
+    </CartProvider>
   );
 };
 

@@ -1,7 +1,27 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
+import { RouteProp } from '@react-navigation/native';
 
-const PetDetailsScreen = ({ route }) => {
+type RootStackParamList = {
+  PetDetails: {
+    pet: {
+      id: string;
+      name: string;
+      breed: string;
+      age: number;
+      image: string;
+      description?: string;
+    };
+  };
+};
+
+type PetDetailsScreenRouteProp = RouteProp<RootStackParamList, 'PetDetails'>;
+
+interface PetDetailsScreenProps {
+  route: PetDetailsScreenRouteProp;
+}
+
+const PetDetailsScreen: React.FC<PetDetailsScreenProps> = ({ route }) => {
   const { pet } = route.params;
 
   return (

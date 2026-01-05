@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -7,36 +7,22 @@ import {
   SafeAreaView,
   FlatList,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/Header';
 import Banner from '../components/Banner';
 import ServiceCard from '../components/ServiceCard';
 import PetTrackingCard from '../components/PetTrackingCard';
-
-interface Service {
-  id: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  title: string;
-}
+import { useHomeViewModel } from '../../viewmodel/HomeViewModel';
 
 const HomeScreen = ({ navigation }: any) => {
-  const [searchText, setSearchText] = useState('');
+  const {
+    searchText,
+    setSearchText,
+    services,
+    handleServicePress,
+    goToOrderTracking,
+  } = useHomeViewModel(navigation);
 
-  const services: Service[] = [
-    { id: '1', icon: 'cut', title: 'Banho e tosa' },
-    { id: '2', icon: 'medical', title: 'Consultas e exames' },
-    { id: '3', icon: 'storefront', title: 'Nossa loja' },
-  ];
-
-  const handleServicePress = (serviceId: string) => {
-    if (serviceId === '1' || serviceId === '2') {
-      navigation.navigate('Services');
-    } else if (serviceId === '3') {
-      navigation.navigate('Shop');
-    }
-  };
-
-  const renderServiceItem = ({ item }: { item: Service }) => (
+  const renderServiceItem = ({ item }: any) => (
     <View style={styles.serviceItem}>
       <ServiceCard
         icon={item.icon}
@@ -80,7 +66,7 @@ const HomeScreen = ({ navigation }: any) => {
               icon="help-circle-outline"
               title="Seu pet não possui atendimentos."
               description=""
-              onPress={() => navigation.navigate('OrderTracking')}
+              onPress={goToOrderTracking}
             />
           </View>
         </View>

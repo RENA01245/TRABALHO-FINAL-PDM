@@ -11,9 +11,17 @@ import CartScreen from '../view/screens/CartScreen';
 import OrderTrackingScreen from '../view/screens/OrderTrackingScreen';
 import SettingsScreen from '../view/screens/SettingsScreen';
 import CartTabIcon from '../view/components/CartTabIcon';
+import Product from '../model/entities/product';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+type ShopStackParamList = {
+  Shop: undefined;
+  ProductDetails: { product: Product };
+};
+
+const ShopStackNavigator = createStackNavigator<ShopStackParamList>();
 
 const HomeStack = () => {
   return (
@@ -34,18 +42,18 @@ const HomeStack = () => {
 
 const ShopStack = () => {
   return (
-    <Stack.Navigator>
-      <Stack.Screen
+    <ShopStackNavigator.Navigator>
+      <ShopStackNavigator.Screen
         name="Shop"
         component={ShopScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
+      <ShopStackNavigator.Screen
         name="ProductDetails"
         component={ProductDetailsScreen}
         options={{ title: 'Detalhes do Produto' }}
       />
-    </Stack.Navigator>
+    </ShopStackNavigator.Navigator>
   );
 };
 

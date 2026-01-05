@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -8,58 +8,16 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-type OrderStatus = 'Aguardando' | 'Em atendimento' | 'Finalizado';
-
-interface OrderStep {
-  status: OrderStatus;
-  title: string;
-  description: string;
-  icon: keyof typeof import('@expo/vector-icons').Ionicons.glyphMap;
-}
+import { useOrderTrackingViewModel } from '../../viewmodel/OrderTrackingViewModel';
 
 const OrderTrackingScreen = () => {
-  const [currentStatus, setCurrentStatus] = useState<OrderStatus>('Aguardando');
-
-  const steps: OrderStep[] = [
-    {
-      status: 'Aguardando',
-      title: 'Pedido Recebido',
-      description: 'Seu pedido foi recebido e está aguardando processamento.',
-      icon: 'time-outline',
-    },
-    {
-      status: 'Em atendimento',
-      title: 'Em Atendimento',
-      description: 'Seu pedido está sendo processado e preparado.',
-      icon: 'construct-outline',
-    },
-    {
-      status: 'Finalizado',
-      title: 'Pedido Finalizado',
-      description: 'Seu pedido foi concluído com sucesso!',
-      icon: 'checkmark-circle-outline',
-    },
-  ];
-
-  const getCurrentStepIndex = () => {
-    return steps.findIndex((step) => step.status === currentStatus);
-  };
-
-  const getStatusColor = (status: OrderStatus) => {
-    switch (status) {
-      case 'Aguardando':
-        return '#FF9500';
-      case 'Em atendimento':
-        return '#2196F3';
-      case 'Finalizado':
-        return '#4CAF50';
-      default:
-        return '#999';
-    }
-  };
-
-  const currentStepIndex = getCurrentStepIndex();
+  const {
+    steps,
+    currentStatus,
+    currentStepIndex,
+    getStatusColor,
+    advanceStatus,
+  } = useOrderTrackingViewModel();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -81,7 +39,10 @@ const OrderTrackingScreen = () => {
               color={getStatusColor(currentStatus)}
             />
           </View>
-          <Text style={styles.statusTitle}>{steps[currentStepIndex].title}</Text>
+
+          <Text style={styles.statusTitle}>
+            {steps[currentStepIndex].title}
+          </Text>
           <Text style={styles.statusDescription}>
             {steps[currentStepIndex].description}
           </Text>
@@ -110,6 +71,7 @@ const OrderTrackingScreen = () => {
                       color={isCompleted ? '#FFF' : '#999'}
                     />
                   </View>
+
                   {index < steps.length - 1 && (
                     <View
                       style={[
@@ -119,6 +81,7 @@ const OrderTrackingScreen = () => {
                     />
                   )}
                 </View>
+
                 <View style={styles.timelineContent}>
                   <Text
                     style={[
@@ -151,10 +114,7 @@ const OrderTrackingScreen = () => {
 
         <TouchableOpacity
           style={styles.simulateButton}
-          onPress={() => {
-            const nextIndex = (currentStepIndex + 1) % steps.length;
-            setCurrentStatus(steps[nextIndex].status);
-          }}
+          onPress={advanceStatus}
         >
           <Text style={styles.simulateButtonText}>
             {currentStatus === 'Finalizado'
@@ -167,153 +127,4 @@ const OrderTrackingScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  header: {
-    padding: 20,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: 20,
-  },
-  statusCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 24,
-    alignItems: 'center',
-    marginBottom: 24,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  statusIconContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  statusTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-  },
-  statusDescription: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-  },
-  timeline: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 24,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  timelineItem: {
-    flexDirection: 'row',
-    marginBottom: 24,
-  },
-  timelineLeft: {
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  timelineIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#E0E0E0',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  timelineIconCurrent: {
-    borderWidth: 3,
-    borderColor: '#4CAF50',
-  },
-  timelineLine: {
-    width: 2,
-    flex: 1,
-    backgroundColor: '#E0E0E0',
-    marginTop: 8,
-    minHeight: 40,
-  },
-  timelineLineCompleted: {
-    backgroundColor: '#4CAF50',
-  },
-  timelineContent: {
-    flex: 1,
-    paddingTop: 4,
-  },
-  timelineTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#999',
-    marginBottom: 4,
-  },
-  timelineTitleCompleted: {
-    color: '#333',
-  },
-  timelineDescription: {
-    fontSize: 14,
-    color: '#666',
-  },
-  finalMessage: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 24,
-    alignItems: 'center',
-    marginBottom: 24,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  finalMessageTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  finalMessageText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-  },
-  simulateButton: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  simulateButtonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
-
-export default OrderTrackingScreen;
-
+const styles = StyleSheet.create({ container: { flex: 1, backgroundColor: '#F5F5F5', }, header: { padding: 20, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#E0E0E0', }, headerTitle: { fontSize: 24, fontWeight: 'bold', color: '#333', }, scrollView: { flex: 1, }, content: { padding: 20, }, statusCard: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 24, alignItems: 'center', marginBottom: 24, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, }, statusIconContainer: { width: 100, height: 100, borderRadius: 50, justifyContent: 'center', alignItems: 'center', marginBottom: 16, }, statusTitle: { fontSize: 24, fontWeight: 'bold', color: '#333', marginBottom: 8, }, statusDescription: { fontSize: 16, color: '#666', textAlign: 'center', }, timeline: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 20, marginBottom: 24, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, }, timelineItem: { flexDirection: 'row', marginBottom: 24, }, timelineLeft: { alignItems: 'center', marginRight: 16, }, timelineIcon: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#E0E0E0', justifyContent: 'center', alignItems: 'center', }, timelineIconCurrent: { borderWidth: 3, borderColor: '#4CAF50', }, timelineLine: { width: 2, flex: 1, backgroundColor: '#E0E0E0', marginTop: 8, minHeight: 40, }, timelineLineCompleted: { backgroundColor: '#4CAF50', }, timelineContent: { flex: 1, paddingTop: 4, }, timelineTitle: { fontSize: 18, fontWeight: '600', color: '#999', marginBottom: 4, }, timelineTitleCompleted: { color: '#333', }, timelineDescription: { fontSize: 14, color: '#666', }, finalMessage: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 24, alignItems: 'center', marginBottom: 24, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, }, finalMessageTitle: { fontSize: 24, fontWeight: 'bold', color: '#4CAF50', marginTop: 16, marginBottom: 8, }, finalMessageText: { fontSize: 16, color: '#666', textAlign: 'center', }, simulateButton: { backgroundColor: '#4CAF50', paddingVertical: 16, borderRadius: 12, alignItems: 'center', }, simulateButtonText: { color: '#FFF', fontSize: 16, fontWeight: '600', }, }); export default OrderTrackingScreen;

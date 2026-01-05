@@ -1,16 +1,14 @@
 {
-  "name": "PetCare",
-  "displayName": "PetCare",
-  "version": "1.0.0",
   "expo": {
-    "sdkVersion": "54.0.0",
-    "platforms": ["ios", "android"],
+    "name": "petcare-app",
+    "slug": "petcare-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
     "splash": {
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
       "**/*"
@@ -20,8 +18,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
       }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
     }
   }
 }

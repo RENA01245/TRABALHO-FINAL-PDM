@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useDebugValue, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import { useCart } from '../../src/context/CartContext';
 import Service from '../../src/model/entities/service';
 import Pet from '../../src/model/entities/pet';
-import { serviceUseCases, petUseCases } from '../../src/di/container';
-import { useAuth } from '../../src/context/AuthContext';
+import User from '../../src/model/entities/user';
+import { serviceUseCases, petUseCases, authUseCases } from '../../src/di/container';
+
+
 
 export const useServicesViewModel = () => {
-  const { user } = useAuth();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const { addItem } = useCart();
   
   const [services, setServices] = useState<Service[]>([]);
@@ -15,14 +17,30 @@ export const useServicesViewModel = () => {
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [showPetModal, setShowPetModal] = useState(false);
 
-
   useEffect(() => {
     loadServices();
-    if (user?.uID) {
-      console.log("🔍 Carregando pets para o uID:", user.uID); // VEJA O QUE APARECE AQUI
-      loadPets(user.uID);
-    }
-  }, [user]);
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = authUseCases.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+      if (user?.uID) {
+        console.log("🔍 Carregando pets para o uID:", user.uID);
+        loadPets(user.uID);
+      } else {
+        setPets([]);
+      }
+    });
+
+    // Retorna função de limpeza
+    return () => {
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
+  }, []);
+    
+
 
   const loadServices = async () => {
     try {
@@ -48,6 +66,12 @@ export const useServicesViewModel = () => {
   };
 
   const addServiceToCart = (service: Service) => {
+    // Verifica se há usuário logado
+    if (!currentUser) {
+      Alert.alert('Erro', 'Você precisa estar logado para enviar o pedido.');
+      return;
+    }
+
     if (!selectedPet) {
       Alert.alert('Atenção', 'Selecione um pet antes de agendar.');
       return;

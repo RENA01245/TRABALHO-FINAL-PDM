@@ -2,7 +2,6 @@ import { Alert, Linking } from 'react-native';
 import { useCart } from '@/context/CartContext';
 import { authUseCases } from '@/di/container';
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
 import User from '@/model/entities/user';
 
 /**
@@ -13,14 +12,11 @@ import User from '@/model/entities/user';
 export const useCartViewModel = () => {
   const { items, updateQuantity, removeItem, getTotal, clearCart } = useCart();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  console.log(authUseCases)
-
   // Carrega o usuário atual usando o sistema de DI
   // Isso funciona tanto com mocks quanto com banco real
   useEffect(() => {
     // Observa mudanças no estado de autenticação
     const unsubscribe = authUseCases.onAuthStateChanged((user) => {
-      console.log(user)
       setCurrentUser(user);
     });
 

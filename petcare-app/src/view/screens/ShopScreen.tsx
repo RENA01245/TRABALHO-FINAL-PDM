@@ -65,6 +65,85 @@ const ShopScreen = ({ navigation }: any) => {
   );
 };
 
-const styles = StyleSheet.create({ container: { flex: 1, backgroundColor: '#F5F5F5', }, header: { padding: 20, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#E0E0E0', }, headerTitle: { fontSize: 24, fontWeight: 'bold', color: '#333', }, list: { padding: 10, }, row: { justifyContent: 'space-between', }, productCard: { backgroundColor: '#FFFFFF', borderRadius: 12, margin: 5, width: '48%', elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, }, productImage: { width: '100%', height: 150, borderTopLeftRadius: 12, borderTopRightRadius: 12, backgroundColor: '#E0E0E0', }, productInfo: { padding: 12, }, productName: { fontSize: 14, fontWeight: '600', color: '#333', marginBottom: 8, minHeight: 40, }, productPrice: { fontSize: 18, fontWeight: 'bold', color: '#4CAF50', marginBottom: 8, }, addButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#4CAF50', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8, gap: 6, }, addButtonText: { color: '#FFF', fontWeight: '600', fontSize: 14, }, });
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
+  // --- Header Section ---
+  header: {
+    padding: 20,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  // --- List & Grid ---
+  list: {
+    padding: 10,
+  },
+  row: {
+    justifyContent: 'space-between',
+  },
+  // --- Card Styling ---
+  productCard: {
+    width: '48%',
+    margin: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    // Sombra (Android)
+    elevation: 2,
+    // Sombra (iOS)
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    marginBottom: 10,
+  },
+  productImage: {
+    width: '100%',
+    height: 130,
+    backgroundColor: '#E0E0E0',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+  },
+  productInfo: {
+    padding: 9,
+  },
+  // --- Product Details ---
+  productName: {
+    minHeight: 40,
+    marginBottom: 4,
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#333',
+  },
+  productPrice: {
+    marginBottom: 8,
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+  },
+  // --- Buttons ---
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 2,
+    backgroundColor: '#4CAF50',
+    borderRadius: 8,
+  },
+  addButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFF',
+  },
+});
 
 export default ShopScreen;

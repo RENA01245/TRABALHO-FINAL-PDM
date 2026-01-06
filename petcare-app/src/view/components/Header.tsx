@@ -24,7 +24,7 @@ const Header: React.FC<HeaderProps> = ({
           style={styles.notificationButton}
           onPress={onNotificationPress}
         >
-          <Ionicons name="notifications-outline" size={24} color="#333" />
+          <Ionicons name="notifications-outline" size={24} color="#333"/>
           <View style={styles.badge}>
             <Text style={styles.badgeText}>N</Text>
           </View>
@@ -45,21 +45,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 2,
   },
   greeting: {
     fontSize: 24,
+    paddingTop: 15,
     fontWeight: 'bold',
     color: '#333',
     flex: 1,
   },
   notificationButton: {
+    paddingTop: 15,
     position: 'relative',
     padding: 8,
   },
   badge: {
     position: 'absolute',
-    top: 4,
+    top: 12,
     right: 4,
     backgroundColor: '#FF3B30',
     borderRadius: 10,

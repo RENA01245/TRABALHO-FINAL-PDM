@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Modal,
+  ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Service from '../../model/entities/service';
@@ -64,24 +65,24 @@ const ServicesScreen = () => {
           <Ionicons name="chevron-down" size={20} color="#666" />
         </TouchableOpacity>
       </View>
-
+      <ScrollView>
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Agende exames e consultas</Text>
-        <FlatList
-          data={examAndConsultationServices}
-          renderItem={renderService}
-          keyExtractor={(item) => item.id}
-        />
+          <Text style={styles.sectionTitle}>Agende exames e consultas</Text>
+          <FlatList
+            data={examAndConsultationServices}
+            renderItem={renderService}
+            keyExtractor={(item) => item.id}
+            scrollEnabled={false}
+          />
+          <Text style={styles.sectionTitle}>Agende Banho e tosa</Text>
+          <FlatList
+            data={bathAndGroomingServices}
+            renderItem={renderService}
+            keyExtractor={(item) => item.id}
+            scrollEnabled={false}
+          />
       </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Faça o agendamento</Text>
-        <FlatList
-          data={bathAndGroomingServices}
-          renderItem={renderService}
-          keyExtractor={(item) => item.id}
-        />
-      </View>
+      </ScrollView>
 
       <Modal visible={showPetModal} transparent animationType="slide">
         <View style={styles.modalOverlay}>

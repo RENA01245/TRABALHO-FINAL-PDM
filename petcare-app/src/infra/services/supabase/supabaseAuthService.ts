@@ -9,7 +9,8 @@ export class SupabaseAuthService implements IAuthService {
     return {
       uID: supabaseUser.id,
       email: supabaseUser.email || '',
-      userName: ''
+      userName: '',
+      pets: []
     };
   }
 
@@ -57,13 +58,18 @@ export class SupabaseAuthService implements IAuthService {
     }
   }
 
-  onAuthStateChanged(callback: (user: User | null) => void): void {
-    supabase.auth.onAuthStateChange((_event, session) => {
+  onAuthStateChanged(callback: (user: User | null) => void): () => void {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         callback(this.mapSupabaseUserToDomainUser(session.user));
       } else {
         callback(null);
       }
     });
+    
+    // Retorna função para cancelar a observação
+    return () => {
+      subscription.unsubscribe();
+    };
   }
 }

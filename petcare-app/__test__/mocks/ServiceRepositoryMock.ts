@@ -1,7 +1,7 @@
-import { IServiceRepository } from "../src/model/repositories/iServiceRepository";
-import Service from "../src/model/entities/service";
-import { mockServices } from "../__test__/data/mockData";
-import { RepositoryError } from "../src/model/errors/repositoryError";
+import { IServiceRepository } from "../../src/model/repositories/iServiceRepository";
+import Service from "../../src/model/entities/service";
+import { mockServices } from "../../__test__/data/mockData";
+import { RepositoryError } from "../../src/model/errors/repositoryError";
 
 export class MockServiceRepository implements IServiceRepository {
   getAllServices(): Promise<Service[]> {

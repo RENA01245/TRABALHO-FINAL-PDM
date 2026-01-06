@@ -19,8 +19,10 @@ export const useHomeViewModel = (navigation: any) => {
   const handleServicePress = (serviceId: string) => {
     switch (serviceId) {
       case '1':
+        navigation.navigate('Services', {filter: 'bath' });
+        break;
       case '2':
-        navigation.navigate('Services');
+        navigation.navigate('Services', {filter: 'health' });
         break;
       case '3':
         navigation.navigate('Shop');

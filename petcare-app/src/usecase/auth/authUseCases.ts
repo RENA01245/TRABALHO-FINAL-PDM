@@ -6,6 +6,7 @@ import { RepositoryError } from "@/model/errors/repositoryError";
 import { IAuthService } from "@/model/services/iAuthService";
 import { IUserRepository } from "@/model/repositories/iUserRepository";
 import { IAuthUseCases } from "./iAuthUseCases";
+import { makeUser } from "@/helpers/userHelper";
 
 export default class AuthUseCases implements IAuthUseCases {
 
@@ -22,7 +23,7 @@ export default class AuthUseCases implements IAuthUseCases {
 
         try {
             const authUser = await this.authService.login(email, password);
-            const fullUser = await this.userRepository.getUserByID(authUser.id!);
+            const fullUser = await this.userRepository.getUserByID(authUser.uID);
 
             if (!fullUser) {
                 throw new AuthError('Usuário não encontrado no sistema');
@@ -42,7 +43,7 @@ export default class AuthUseCases implements IAuthUseCases {
 
         try {
             const authUser = await this.authService.signup(email, password);
-            const fullUser = makeUser({ id: authUser.id!, name, email, role: 'patient' });
+            const fullUser = makeUser({ id: authUser.uID, name, email, role: 'patient' });
             await this.userRepository.createUser(fullUser);
             return fullUser;
         } catch (error) {
@@ -66,9 +67,17 @@ export default class AuthUseCases implements IAuthUseCases {
 
     onAuthStateChanged(callback: (user: User | null) => void): () => void {
         return this.authService.onAuthStateChanged(async (authUser) => {
-            if (authUser && authUser.id) {
+            if (authUser && authUser.uID) {
+                // PROTEÇÃO: Se o ID for de mock ("u1"), ignore e force logout
+                if (authUser.uID === 'u1' || authUser.uID.length < 20) {
+                    console.warn("⚠️ Sessão de mock detectada no banco real. Limpando...");
+                    this.logout();
+                    callback(null);
+                    return;
+                }
+    
                 try {
-                    const fullUser = await this.userRepository.getUserByID(authUser.id);
+                    const fullUser = await this.userRepository.getUserByID(authUser.uID);
                     callback(fullUser);
                 } catch (error) {
                     callback(null);
@@ -78,5 +87,4 @@ export default class AuthUseCases implements IAuthUseCases {
             }
         });
     }
-
 }

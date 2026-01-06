@@ -7,5 +7,5 @@ export interface IAuthService {
 
   logout(): Promise<void>;
 
-  onAuthStateChanged(callback: (user: User | null) => void): void;
+  onAuthStateChanged(callback: (user: User | null) => void): () => void;
 }

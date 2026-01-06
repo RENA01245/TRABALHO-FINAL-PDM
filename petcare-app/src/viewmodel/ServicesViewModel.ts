@@ -4,20 +4,25 @@ import { useCart } from '../../src/context/CartContext';
 import Service from '../../src/model/entities/service';
 import Pet from '../../src/model/entities/pet';
 import { serviceUseCases, petUseCases } from '../../src/di/container';
-import { mockPets } from '../../__test__/data/mockData';
+import { useAuth } from '../../src/context/AuthContext';
 
 export const useServicesViewModel = () => {
+  const { user } = useAuth();
   const { addItem } = useCart();
-
+  
   const [services, setServices] = useState<Service[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [showPetModal, setShowPetModal] = useState(false);
 
+
   useEffect(() => {
     loadServices();
-    loadPets();
-  }, []);
+    if (user?.uID) {
+      console.log("🔍 Carregando pets para o uID:", user.uID); // VEJA O QUE APARECE AQUI
+      loadPets(user.uID);
+    }
+  }, [user]);
 
   const loadServices = async () => {
     try {
@@ -29,11 +34,9 @@ export const useServicesViewModel = () => {
     }
   };
 
-  const loadPets = async () => {
-    const dummyClientId = 'seu_cliente_id_aqui'; // placeholder
-
+  const loadPets = async (clientId: string) => {
     try {
-      const fetchedPets = await petUseCases.getAllPetsByClientId(dummyClientId);
+      const fetchedPets = await petUseCases.getAllPetsByClientId(clientId);
       setPets(fetchedPets);
       if (fetchedPets.length > 0) {
         setSelectedPet(fetchedPets[0]);

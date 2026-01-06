@@ -121,29 +121,53 @@ export const mockServices: Service[] = [
     estimatedDuration: 40,
     type: 'exam',
   },
+  {
+    id: 's9',
+    name: 'Exames Laboratoriais',
+    description: 'Pacote de exames laboratoriais completos.',
+    price: 150.0,
+    estimatedDuration: 90,
+    type: 'exam',
+  },
+  {
+    id: 's10',
+    name: 'Raio X',
+    description: 'Exame de raio X para diagnóstico.',
+    price: 200.0,
+    estimatedDuration: 30,
+    type: 'exam',
+  },
+  {
+    id: 's11',
+    name: 'Cirurgia',
+    description: 'Procedimento cirúrgico com anestesia.',
+    price: 500.0,
+    estimatedDuration: 240,
+    type: 'procedure',
+  },
 ];
 
 
 export const mockPets: Pet[] = [
   {
-    id: 'p1',
-    clientId: 'u1',
+    id: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c2d',
+    clientId: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
     name: 'Rex',
     breed: 'Labrador',
     age: 5,
     observations: 'Muito dócil e brincalhão',
   },
   {
-    id: 'p2',
-    clientId: 'u1',
+    id: 'c7b3d8e0-1b1d-4b2f-9b1d-7b3d8e0b1d2f',
+    clientId: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
     name: 'Mimi',
     breed: 'Siamês',
     age: 3,
     observations: null,
   },
   {
-    id: 'p3',
-    clientId: 'u2',
+    id: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1asf',
+    clientId: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
     name: 'Buddy',
     breed: 'Golden Retriever',
     age: 2,
@@ -153,7 +177,7 @@ export const mockPets: Pet[] = [
 
 export const mockUser: User[] = [
   {
-    uID: 'u1',
+    uID: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
     userName: 'Gustavo Nery',
     email: 'joao@email.com',
     telefone: '55 86 999048018',

@@ -86,4 +86,38 @@ describe("ProductUseCases", () => {
       );
     });
   });
+
+  describe('CRUD de produto', () => {
+    it('deve criar um produto válido', async () => {
+      const before = await productUseCases.getAllProducts();
+      const newProduct = await productUseCases.createProduct({ name: 'Cama Teste', price: 49.9, description: 'Teste', imageUrl: null });
+      expect(newProduct).toHaveProperty('id');
+      expect(newProduct.name).toBe('Cama Teste');
+
+      const after = await productUseCases.getAllProducts();
+      expect(after.length).toBe(before.length + 1);
+    });
+
+    it('deve atualizar um produto existente', async () => {
+      const created = await productUseCases.createProduct({ name: 'Atualizar Test', price: 20.0 });
+      const updated = await productUseCases.updateProduct(created.id, { name: 'Atualizado', price: 25.5 });
+      expect(updated.name).toBe('Atualizado');
+      expect(updated.price).toBe(25.5);
+
+      const fetched = await productUseCases.getProductById(created.id);
+      expect(fetched?.name).toBe('Atualizado');
+    });
+
+    it('deve deletar um produto', async () => {
+      const created = await productUseCases.createProduct({ name: 'Deletar Test', price: 15.0 });
+      await productUseCases.deleteProduct(created.id);
+      const fetched = await productUseCases.getProductById(created.id);
+      expect(fetched).toBeNull();
+    });
+
+    it('deve validar dados ao criar produto', async () => {
+      await expect(productUseCases.createProduct({ name: '', price: 10 })).rejects.toThrow();
+      await expect(productUseCases.createProduct({ name: 'X', price: 0 })).rejects.toThrow();
+    });
+  });
 });

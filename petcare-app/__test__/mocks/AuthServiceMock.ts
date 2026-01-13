@@ -9,10 +9,17 @@ import { mockUser } from "../data/mockData";
  */
 export class MockAuthService implements IAuthService {
   private currentUser: User | null = null;
-  private registeredUsers: Array<{ email: string; password: string; id: string }> = [];
+  private registeredUsers: Array<{ email: string; password: string; id: string; role?: string }> = [];
 
   constructor(initialUser: User | null = null) {
     this.currentUser = initialUser;
+    // Registra usuário admin mock por padrão
+    this.registeredUsers.push({
+      email: 'admin@petcare.com',
+      password: 'admin123',
+      id: 'admin-123-456-789-abc-def',
+      role: 'admin',
+    });
   }
   /**
    * Realiza login de um usuário
@@ -39,7 +46,8 @@ export class MockAuthService implements IAuthService {
       userName: userName,
       email: userName,
       telefone: null,
-      pets: []
+      pets: [],
+      role: user.role === 'admin' ? 'admin' : 'patient',
     };
 
     this.currentUser = authUser;

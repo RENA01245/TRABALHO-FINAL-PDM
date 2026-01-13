@@ -21,7 +21,9 @@
 // ============================================================
 // Altere esta flag para alternar entre mocks e banco real
 // true = usa mocks (dados fake) | false = usa banco real (Supabase)
-const USE_MOCKS = true;
+// NOTA: Agora sempre usa Supabase para repositórios, mas usa HybridAuthService
+// que permite login mock apenas para admin (admin@petcare.com / admin123)
+const USE_MOCKS = false;
 // ============================================================
 
 // ============================================================
@@ -29,8 +31,10 @@ const USE_MOCKS = true;
 // ============================================================
 import { SupabaseUserRepository } from "../infra/repositories/supabaseUserRepository";
 import { SupabaseAuthService } from "../infra/services/supabase/supabaseAuthService";
+import { HybridAuthService } from "../infra/services/hybridAuthService";
 import { SupabaseServiceRepository } from "../infra/repositories/supabaseServiceRepository";
 import { SupabasePetRepository } from "../infra/repositories/supabasePetRepository";
+import { HybridPetRepository } from "../infra/repositories/hybridPetRepository";
 import { SupabaseProductRepository } from "../infra/repositories/supabaseProductRepository";
 
 // ============================================================
@@ -62,6 +66,7 @@ import { PetUseCases } from "../usecase/pet/petUseCases";
 import { IPetUseCases } from "../usecase/pet/iPetUseCases";
 import { ProductUseCases } from "../usecase/product/productUseCases";
 import { IProductUseCases } from "../usecase/product/iProductUseCases";
+import { AdminUseCases } from "../usecase/auth/adminUseCases";
 import { mockUser } from "../../__test__/data/mockData";
 
 // ============================================================
@@ -78,7 +83,8 @@ let productRepository: IProductRepository;
 // LÓGICA DE ALTERNÂNCIA ENTRE MOCKS E BANCO REAL
 // ============================================================
 if (USE_MOCKS) {
-  const userMock = mockUser[0]
+  const userMock = mockUser[0];
+  const adminMock = mockUser[1]; // Usuário admin
   // ============================================================
   // MODO MOCK: Usa implementações fake com dados mockados
   // ============================================================
@@ -87,7 +93,11 @@ if (USE_MOCKS) {
   authService = new MockAuthService(userMock);
   userRepository = new MockUserRepository();
 
-  userRepository.createUser(userMock)
+  // Cria usuário comum e admin mock
+  // Como são operações assíncronas mas o repositório mock é síncrono em memória,
+  // executamos sem await mas garantimos que sejam criados
+  userRepository.createUser(userMock).catch(err => console.warn('Erro ao criar userMock:', err));
+  userRepository.createUser(adminMock).catch(err => console.warn('Erro ao criar adminMock:', err));
 
   serviceRepository = new MockServiceRepository();
   petRepository = new MockPetRepository();
@@ -97,11 +107,15 @@ if (USE_MOCKS) {
   // MODO REAL: Usa implementações reais com Supabase
   // ============================================================
   console.log("🗄️ [DI] Usando BANCO DE DADOS REAL - Supabase");
+  console.log("🔐 [DI] AuthService híbrido: Mock apenas para admin, Supabase para outros usuários");
+  console.log("🐾 [DI] PetRepository híbrido: Pet mock para admin, Supabase para outros usuários");
   
-  authService = new SupabaseAuthService();
+  // Usa HybridAuthService que permite login mock apenas para admin
+  // mas usa Supabase para todos os outros usuários
+  authService = new HybridAuthService();
   userRepository = new SupabaseUserRepository();
   serviceRepository = new SupabaseServiceRepository();
-  petRepository = new SupabasePetRepository();
+  petRepository = new HybridPetRepository(); // Usa híbrido para retornar pet mock do admin
   productRepository = new SupabaseProductRepository();
 }
 
@@ -112,10 +126,10 @@ if (USE_MOCKS) {
 // saber se são mocks ou implementações reais. Isso permite
 // testar facilmente e alternar entre ambientes.
 let authUseCases: IAuthUseCases = new AuthUseCases(authService, userRepository);
-console.log(authUseCases)
 let serviceUseCases: IServiceUseCases = new ServiceUseCases(serviceRepository);
 let petUseCases: IPetUseCases = new PetUseCases(petRepository);
 let productUseCases: IProductUseCases = new ProductUseCases(productRepository);
+let adminUseCases: AdminUseCases = new AdminUseCases(userRepository);
 
 // ============================================================
 // EXPORTS
@@ -127,7 +141,8 @@ export {
   authUseCases, 
   serviceUseCases, 
   petUseCases, 
-  productUseCases 
+  productUseCases,
+  adminUseCases
 };
 
 // ============================================================

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import { useCart } from '../../src/context/CartContext';
-import Product from '../../src/model/entities/product';
-import { productUseCases } from '../../src/di/container';
+import { useCart } from '../context/CartContext';
+import Product from '../model/entities/product';
+import { productUseCases } from '../di/container';
 
 export const useShopViewModel = () => {
   const { addItem } = useCart();

@@ -89,22 +89,34 @@ const ServicesScreen = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Selecione seu pet</Text>
 
-            {pets.map((pet) => (
-              <TouchableOpacity
-                key={pet.id}
-                style={styles.petOption}
-                onPress={() => selectPet(pet)}
-              >
-                <Ionicons name="paw" size={24} color="#4CAF50" />
-                <Text style={styles.petOptionText}>
-                  {pet.name} - {pet.breed}
+            {pets.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Ionicons name="paw-outline" size={48} color="#999" />
+                <Text style={styles.emptyStateText}>
+                  Nenhum pet cadastrado
                 </Text>
+                <Text style={styles.emptyStateSubtext}>
+                  Cadastre um pet para agendar serviços
+                </Text>
+              </View>
+            ) : (
+              pets.map((pet) => (
+                <TouchableOpacity
+                  key={pet.id}
+                  style={styles.petOption}
+                  onPress={() => selectPet(pet)}
+                >
+                  <Ionicons name="paw" size={24} color="#4CAF50" />
+                  <Text style={styles.petOptionText}>
+                    {pet.name} - {pet.breed || 'Sem raça definida'}
+                  </Text>
 
-                {selectedPet?.id === pet.id && (
-                  <Ionicons name="checkmark" size={24} color="#4CAF50" />
-                )}
-              </TouchableOpacity>
-            ))}
+                  {selectedPet?.id === pet.id && (
+                    <Ionicons name="checkmark" size={24} color="#4CAF50" />
+                  )}
+                </TouchableOpacity>
+              ))
+            )}
 
             <TouchableOpacity
               style={styles.closeButton}
@@ -262,6 +274,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#FFF',
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+  },
+  emptyStateText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
   },
 });
 

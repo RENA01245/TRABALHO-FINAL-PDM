@@ -1,10 +1,10 @@
 import { useDebugValue, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import { useCart } from '../../src/context/CartContext';
-import Service from '../../src/model/entities/service';
-import Pet from '../../src/model/entities/pet';
-import User from '../../src/model/entities/user';
-import { serviceUseCases, petUseCases, authUseCases } from '../../src/di/container';
+import { useCart } from '../context/CartContext';
+import Service from '../model/entities/service';
+import Pet from '../model/entities/pet';
+import User from '../model/entities/user';
+import { serviceUseCases, petUseCases, authUseCases } from '../di/container';
 
 
 
@@ -54,13 +54,18 @@ export const useServicesViewModel = () => {
 
   const loadPets = async (clientId: string) => {
     try {
+      console.log('🔍 [ServicesViewModel] Carregando pets para clientId:', clientId);
       const fetchedPets = await petUseCases.getAllPetsByClientId(clientId);
+      console.log('✅ [ServicesViewModel] Pets carregados:', fetchedPets.length, fetchedPets);
       setPets(fetchedPets);
       if (fetchedPets.length > 0) {
         setSelectedPet(fetchedPets[0]);
+        console.log('✅ [ServicesViewModel] Pet selecionado:', fetchedPets[0].name);
+      } else {
+        console.warn('⚠️ [ServicesViewModel] Nenhum pet encontrado para clientId:', clientId);
       }
     } catch (error) {
-      console.error(error);
+      console.error('❌ [ServicesViewModel] Erro ao carregar pets:', error);
       Alert.alert('Erro', 'Não foi possível carregar os pets.');
     }
   };

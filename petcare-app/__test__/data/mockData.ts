@@ -173,6 +173,15 @@ export const mockPets: Pet[] = [
     age: 2,
     observations: 'Precisa de atenção com alimentação',
   },
+  // Pet do admin mock
+  {
+    id: 'admin-pet-001-abc-def-123-456',
+    clientId: 'admin-123-456-789-abc-def',
+    name: 'Max',
+    breed: 'Golden Retriever',
+    age: 4,
+    observations: 'Pet do administrador - muito carinhoso',
+  },
 ];
 
 export const mockUser: User[] = [
@@ -182,5 +191,14 @@ export const mockUser: User[] = [
     email: 'joao@email.com',
     telefone: '55 86 999048018',
     pets: [mockPets[0], mockPets[1]],
+    role: 'patient',
+  },
+  {
+    uID: 'admin-123-456-789-abc-def',
+    userName: 'Administrador',
+    email: 'admin@petcare.com',
+    telefone: null,
+    pets: [mockPets[3]], // Pet do admin (Max)
+    role: 'admin',
   }
 ];

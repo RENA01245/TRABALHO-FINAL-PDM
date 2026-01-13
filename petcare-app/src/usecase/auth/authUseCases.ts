@@ -23,18 +23,33 @@ export default class AuthUseCases implements IAuthUseCases {
 
         try {
             const authUser = await this.authService.login(email, password);
+            
+            // Se for admin mock (não existe no repositório), retorna direto
+            // O HybridAuthService já retorna o usuário completo com role
+            if (authUser.role === 'admin' && authUser.uID === 'admin-123-456-789-abc-def') {
+                return authUser;
+            }
+
+            // Para outros usuários, busca no repositório
             const fullUser = await this.userRepository.getUserByID(authUser.uID);
 
             if (!fullUser) {
                 throw new AuthError('Usuário não encontrado no sistema');
             }
 
-            return fullUser;
+            // Preserva o role se vier do authService
+            return {
+                ...fullUser,
+                role: authUser.role || fullUser.role || 'patient',
+            };
         } catch (error) {
             if (error instanceof AuthError || error instanceof RepositoryError || error instanceof ValidationError) {
                 throw error;
             }
-            throw new Error('Erro interno no login');
+            // Log do erro real para debug
+            console.error('Erro interno no login:', error);
+            const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+            throw new Error(`Erro interno no login: ${errorMessage}`);
         }
     }
 
@@ -67,9 +82,17 @@ export default class AuthUseCases implements IAuthUseCases {
 
     onAuthStateChanged(callback: (user: User | null) => void): () => void {
         return this.authService.onAuthStateChanged(async (authUser) => {
+            console.log('🔐 [AuthUseCases] onAuthStateChanged chamado:', authUser?.userName, 'Pets:', authUser?.pets?.length || 0);
             if (authUser && authUser.uID) {
-                // PROTEÇÃO: Se o ID for de mock ("u1"), ignore e force logout
-                if (authUser.uID === 'u1' || authUser.uID.length < 20) {
+                // Se for admin mock, retorna direto (não existe no repositório)
+                if (authUser.role === 'admin' && authUser.uID === 'admin-123-456-789-abc-def') {
+                    console.log('✅ [AuthUseCases] Retornando admin mock com pets:', authUser.pets?.length || 0);
+                    callback(authUser);
+                    return;
+                }
+
+                // PROTEÇÃO: Se o ID for de mock antigo ("u1"), ignore e force logout
+                if (authUser.uID === 'u1' || (authUser.uID.length < 20 && authUser.uID !== 'admin-123-456-789-abc-def')) {
                     console.warn("⚠️ Sessão de mock detectada no banco real. Limpando...");
                     this.logout();
                     callback(null);
@@ -78,7 +101,15 @@ export default class AuthUseCases implements IAuthUseCases {
     
                 try {
                     const fullUser = await this.userRepository.getUserByID(authUser.uID);
-                    callback(fullUser);
+                    if (fullUser) {
+                        // Preserva o role se vier do authService
+                        callback({
+                            ...fullUser,
+                            role: authUser.role || fullUser.role || 'patient',
+                        });
+                    } else {
+                        callback(null);
+                    }
                 } catch (error) {
                     callback(null);
                 }

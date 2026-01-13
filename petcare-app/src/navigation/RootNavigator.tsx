@@ -10,6 +10,8 @@ import ServicesScreen from '../view/screens/ServicesScreen';
 import CartScreen from '../view/screens/CartScreen';
 import OrderTrackingScreen from '../view/screens/OrderTrackingScreen';
 import SettingsScreen from '../view/screens/SettingsScreen';
+import AdminDashboardScreen from '../view/screens/AdminDashboardScreen';
+import AdminProductsScreen from '../view/screens/AdminProductsScreen';
 import CartTabIcon from '../view/components/CartTabIcon';
 import Product from '../model/entities/product';
 
@@ -35,6 +37,21 @@ const HomeStack = () => {
         name="OrderTracking"
         component={OrderTrackingScreen}
         options={{ title: 'Acompanhar Pedido' }}
+      />
+      <Stack.Screen
+        name="AdminDashboard"
+        component={AdminDashboardScreen}
+        options={{ 
+          title: 'Dashboard Administrativo',
+          headerShown: true,
+        }}
+      />
+      <Stack.Screen
+        name="AdminProducts"
+        component={AdminProductsScreen}
+        options={{
+          title: 'Gerenciar Produtos',
+        }}
       />
     </Stack.Navigator>
   );

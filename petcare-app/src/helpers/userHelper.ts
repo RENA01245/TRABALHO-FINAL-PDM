@@ -1,4 +1,4 @@
-import User from "../model/entities/user";
+import User, { UserRole } from "../model/entities/user";
 
 /**
  * Helper para criar objetos User
@@ -8,7 +8,7 @@ export function makeUser(params: {
   id: string;
   name: string;
   email: string;
-  role?: string;
+  role?: UserRole;
 }): User {
   return {
     uID: params.id,
@@ -16,5 +16,6 @@ export function makeUser(params: {
     email: params.email,
     telefone: null,
     pets: [],
+    role: params.role || 'patient',
   };
 }

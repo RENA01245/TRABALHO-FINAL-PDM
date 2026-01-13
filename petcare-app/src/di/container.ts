@@ -21,7 +21,7 @@
 // ============================================================
 // Altere esta flag para alternar entre mocks e banco real
 // true = usa mocks (dados fake) | false = usa banco real (Supabase)
-const USE_MOCKS = true;
+const USE_MOCKS = false;
 // ============================================================
 
 // ============================================================
@@ -78,31 +78,34 @@ let productRepository: IProductRepository;
 // LÓGICA DE ALTERNÂNCIA ENTRE MOCKS E BANCO REAL
 // ============================================================
 if (USE_MOCKS) {
-  const userMock = mockUser[0]
-  // ============================================================
-  // MODO MOCK: Usa implementações fake com dados mockados
-  // ============================================================
+  const userMock = mockUser[0];
   console.log("🔧 [DI] Usando MOCKS - Dados fake para desenvolvimento/testes");
   
   authService = new MockAuthService(userMock);
   userRepository = new MockUserRepository();
-
-  userRepository.createUser(userMock)
-
+  userRepository.createUser(userMock);
   serviceRepository = new MockServiceRepository();
   petRepository = new MockPetRepository();
   productRepository = new MockProductRepository();
 } else {
-  // ============================================================
-  // MODO REAL: Usa implementações reais com Supabase
-  // ============================================================
-  console.log("🗄️ [DI] Usando BANCO DE DADOS REAL - Supabase");
-  
-  authService = new SupabaseAuthService();
-  userRepository = new SupabaseUserRepository();
-  serviceRepository = new SupabaseServiceRepository();
-  petRepository = new SupabasePetRepository();
-  productRepository = new SupabaseProductRepository();
+  console.log("🗄️ [DI] Tentando usar BANCO DE DADOS REAL - Supabase");
+  try {
+    authService = new SupabaseAuthService();
+    userRepository = new SupabaseUserRepository();
+    serviceRepository = new SupabaseServiceRepository();
+    petRepository = new SupabasePetRepository();
+    productRepository = new SupabaseProductRepository();
+  } catch (err) {
+    console.error("❌ [DI] Falha ao inicializar Supabase:", err);
+    console.warn("🔧 [DI] Alternando para MOCKS automaticamente (fallback)");
+    const userMock = mockUser[0];
+    authService = new MockAuthService(userMock);
+    userRepository = new MockUserRepository();
+    userRepository.createUser(userMock);
+    serviceRepository = new MockServiceRepository();
+    petRepository = new MockPetRepository();
+    productRepository = new MockProductRepository();
+  }
 }
 
 // ============================================================

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "petcare-app",
+    "name": "PetCareApp",
     "slug": "petcare-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -24,6 +24,10 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "EXPO_PUBLIC_SUPABASE_URL": "https://xxxxx.supabase.co",
+      "EXPO_PUBLIC_SUPABASE_ANON_KEY": "public-anon-key-aqui"
     }
   }
 }

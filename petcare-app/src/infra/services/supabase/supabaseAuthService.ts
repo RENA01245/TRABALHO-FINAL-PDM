@@ -1,75 +1,79 @@
-import { User as SupabaseUser } from '@supabase/supabase-js';
-import User from '../../../model/entities/user';
-import { IAuthService } from '../../../model/services/iAuthService';
-import { supabase } from '../supabase/supabase';
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { IAuthService, AuthCredentials } from "../../../model/services/iAuthService";
+import User from "../../../model/entities/user";
+import { InvalidCredentialsError, AuthNetworkError, UserAlreadyExistsError } from "../../../model/errors/authErrors";
+import Constants from "expo-constants";
 
 export class SupabaseAuthService implements IAuthService {
-  
-  private mapSupabaseUserToDomainUser(supabaseUser: SupabaseUser): User {
-    return {
-      uID: supabaseUser.id,
-      email: supabaseUser.email || '',
-      userName: '',
-      pets: []
-    };
+  private client: SupabaseClient;
+
+  constructor() {
+    // ler de app.json extra via expo-constants em vez de process.env, se for o seu caso
+    const url = (Constants.expoConfig?.extra as any)?.EXPO_PUBLIC_SUPABASE_URL;
+    const key = (Constants.expoConfig?.extra as any)?.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !key) throw new Error("Supabase env vars not set (app.json.extra)");
+    this.client = createClient(url, key);
   }
 
-  async login(userName: string, password: string): Promise<User> {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: userName,
-      password: password,
-    });
-
-    if (error) {
-      throw new Error(error.message);
+  async login(credentials: AuthCredentials): Promise<User> {
+    try {
+      const { data, error } = await this.client.auth.signInWithPassword({
+        email: credentials.userName,
+        password: credentials.password,
+      });
+      if (error || !data.session) throw new InvalidCredentialsError();
+      const supUser = data.user;
+      return {
+        id: supUser.id,
+        userName: supUser.email || credentials.userName,
+        email: supUser.email,
+      };
+    } catch (err) {
+      if (err instanceof InvalidCredentialsError) throw err;
+      throw new AuthNetworkError();
     }
-
-    if (!data.user) {
-      throw new Error('User not found after login');
-    }
-
-    return this.mapSupabaseUserToDomainUser(data.user);
   }
 
-  async signup(userName: string, password: string): Promise<User> {
-    const { data, error } = await supabase.auth.signUp({
-      email: userName,
-      password: password,
-    });
-
-    if (error) {
-      throw new Error(error.message);
+  async signup(credentials: AuthCredentials): Promise<User> {
+    try {
+      const { data, error } = await this.client.auth.signUp({
+        email: credentials.userName,
+        password: credentials.password,
+      });
+      if (error) {
+        // mapear erros específicos se possível
+        throw new UserAlreadyExistsError();
+      }
+      const supUser = data.user!;
+      return {
+        id: supUser.id,
+        userName: supUser.email || credentials.userName,
+        email: supUser.email,
+      };
+    } catch (err) {
+      if (err instanceof UserAlreadyExistsError) throw err;
+      throw new AuthNetworkError();
     }
-
-    if (!data.user) {
-      // Supabase might require email confirmation. In that case, user is created but session might be null.
-      // However, usually the user object is returned.
-      // If email confirmation is enabled, we might want to handle it, but for basic auth service:
-      throw new Error('User creation failed or pending email verification');
-    }
-
-    return this.mapSupabaseUserToDomainUser(data.user);
   }
 
   async logout(): Promise<void> {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      throw new Error(error.message);
-    }
+    await this.client.auth.signOut();
+  }
+
+  async getCurrentUser(): Promise<User | null> {
+    const { data } = await this.client.auth.getUser();
+    const u = data.user;
+    if (!u) return null;
+    return { id: u.id, userName: u.email || "", email: u.email };
   }
 
   onAuthStateChanged(callback: (user: User | null) => void): () => void {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        callback(this.mapSupabaseUserToDomainUser(session.user));
-      } else {
-        callback(null);
-      }
+    const { data: sub } = this.client.auth.onAuthStateChange((_event, session) => {
+      const user = session?.user ? { id: session.user.id, userName: session.user.email || "", email: session.user.email } : null;
+      callback(user);
     });
-    
-    // Retorna função para cancelar a observação
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => sub.subscription.unsubscribe();
   }
 }
+
+export default SupabaseAuthService;

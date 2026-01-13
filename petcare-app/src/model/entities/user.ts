@@ -1,9 +1,8 @@
 import Pet from "./pet";
 
 export default interface User {
-  uID: string;
+  id: string;
   userName: string;
-  email: string ;
-  telefone?: string | null;
-  pets: Pet[];
+  email?: string | null;
+  // outros campos do domínio (avatar, role, etc)
 }

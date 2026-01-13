@@ -1,8 +1,10 @@
-import User from "@/model/entities/user";
+import User from "../../model/entities/user";
+import { AuthCredentials } from "../../model/services/iAuthService";
 
 export interface IAuthUseCases {
-    login(email: string, password: string): Promise<User>;
-    signUp(name: string, email: string, password: string): Promise<User>;
-    logout(): Promise<void>;
-    onAuthStateChanged(callback: (user: User | null) => void): () => void;
+  login(credentials: AuthCredentials): Promise<User>;
+  signup(credentials: AuthCredentials): Promise<User>;
+  logout(): Promise<void>;
+  getCurrentUser(): Promise<User | null>;
+  onAuthStateChanged(callback: (user: User | null) => void): () => void;
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useCart } from '../../context/CartContext';
+import { useCart } from '../../usecase/Cart/CartContext';
 
 interface CartTabIconProps {
   focused: boolean;

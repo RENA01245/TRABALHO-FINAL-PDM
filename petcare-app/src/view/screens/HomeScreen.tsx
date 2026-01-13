@@ -20,6 +20,8 @@ const HomeScreen = ({ navigation }: any) => {
     services,
     handleServicePress,
     goToOrderTracking,
+    currentVisiblePet,
+    hasAttendance,
   } = useHomeViewModel(navigation);
 
   const renderServiceItem = ({ item }: any) => (
@@ -62,12 +64,22 @@ const HomeScreen = ({ navigation }: any) => {
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Acompanhe seu pet</Text>
-            <PetTrackingCard
-              icon="help-circle-outline"
-              title="Seu pet não possui atendimentos."
-              description=""
-              onPress={goToOrderTracking}
-            />
+            
+            {hasAttendance && currentVisiblePet ? (
+              <PetTrackingCard
+                icon="paw"
+                title={`${currentVisiblePet.petName} está em atendimento`}
+                description={`Status: ${currentVisiblePet.status} (${currentVisiblePet.serviceName})`}
+                onPress={goToOrderTracking}
+              />
+            ) : (
+              <PetTrackingCard
+                icon="help-circle-outline"
+                title="Seu pet não possui atendimentos."
+                description="Toque para ver o histórico."
+                onPress={goToOrderTracking}
+              />
+            )}
           </View>
         </View>
       </ScrollView>

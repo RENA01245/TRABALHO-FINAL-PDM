@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import { useCart } from '../../src/context/CartContext';
+import { useCart } from '../usecase/Cart/CartContext';
 import Product from '../../src/model/entities/product';
 import { productUseCases } from '../../src/di/container';
 

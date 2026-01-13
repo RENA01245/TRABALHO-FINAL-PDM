@@ -110,10 +110,13 @@ const RootNavigator = () => {
           tabBarActiveTintColor: '#4CAF50',
           tabBarInactiveTintColor: '#999',
           headerShown: false,
+          tabBarLabelStyle: {
+            fontSize: 12,
+          },
           tabBarStyle: {
-            paddingBottom: 5,
+            paddingBottom: 15,
             paddingTop: 5,
-            height: 60,
+            height: 80,
           },
         })}
       >

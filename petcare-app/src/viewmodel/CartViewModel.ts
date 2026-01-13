@@ -1,5 +1,5 @@
 import { Alert, Linking } from 'react-native';
-import { useCart } from '@/context/CartContext';
+import { useCart } from '@/usecase/Cart/CartContext';
 import { authUseCases } from '@/di/container';
 import { useState, useEffect } from 'react';
 import User from '@/model/entities/user';

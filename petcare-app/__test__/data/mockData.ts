@@ -2,7 +2,31 @@ import  Product  from '../../src/model/entities/product';
 import  Service  from '../../src/model/entities/service';
 import  Pet  from '../../src/model/entities/pet';
 import  User  from '../../src/model/entities/user';
-// import { User } from '@supabase/supabase-js';
+import { PetAttendance } from '@/model/entities/petAttendance';
+
+
+export const mockAttendances: PetAttendance[] = [
+    {
+      id: 'att-001',
+      petId: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c2d', // ID do Thor no seu MockPetRepository
+      petName: 'Rex',
+      serviceName: 'Banho e Tosa',
+      status: 'Em Cirurgia',
+      lastUpdate: new Date(),
+      clientId: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
+      serviceId: 's3',
+    },
+    {
+      id: 'att-002',
+      petId: 'c7b3d8e0-1b1d-4b2f-9b1d-7b3d8e0b1d2f', // ID da Mel
+      petName: 'Mimi',
+      serviceName: 'Cirurgia Castração',
+      status: 'Em Cirurgia',
+      lastUpdate: new Date(),
+      clientId: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
+      serviceId: 's7'
+    }
+  ];
 
 export const mockProducts: Product[] = [
   {

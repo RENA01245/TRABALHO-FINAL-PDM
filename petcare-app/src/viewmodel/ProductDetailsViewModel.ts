@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Alert } from 'react-native';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../usecase/Cart/CartContext';
 import Product from '../../src/model/entities/product';
 
 export const useProductDetailsViewModel = (product: Product) => {

@@ -18,14 +18,16 @@ const ServicesScreen = () => {
     pets,
     selectedPet,
     showPetModal,
+    displayExams,
+    displayBath,
     setShowPetModal,
-
-    examAndConsultationServices,
-    bathAndGroomingServices,
-
     selectPet,
     addServiceToCart,
+    activeFilter,
+    setActiveFilter,
+    categories,
   } = useServicesViewModel();
+
 
   const renderService = ({ item }: { item: Service }) => (
     <View style={styles.serviceCard}>
@@ -49,39 +51,86 @@ const ServicesScreen = () => {
     </View>
   );
 
-  return (
+return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Serviços</Text>
+        <Text style={styles.clearText}>Filtros</Text>
+        {/* NOVO: Seletor de Categorias em Chips */}
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          contentContainerStyle={styles.filterScroll}
+        >
+          {categories.map((cat) => (
+            <TouchableOpacity
+              key={cat.label}
+              onPress={() => setActiveFilter(cat.id as any)}
+              style={[
+                styles.filterChip,
+                activeFilter === cat.id && styles.filterChipActive
+              ]}
+            >
+              <Ionicons 
+                name={cat.icon as any} 
+                size={16} 
+                color={activeFilter === cat.id ? '#FFF' : '#4CAF50'} 
+              />
+              <Text style={[
+                styles.filterChipText,
+                activeFilter === cat.id && styles.filterChipTextActive
+              ]}>
+                {cat.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
 
         <TouchableOpacity
           style={styles.petSelector}
           onPress={() => setShowPetModal(true)}
         >
-          <Ionicons name="paw" size={20} color="#4CAF50" />
-          <Text style={styles.petSelectorText}>
-            {selectedPet ? selectedPet.name : 'Selecione um Pet'}
-          </Text>
-          <Ionicons name="chevron-down" size={20} color="#666" />
+          <View style={styles.petSelectorLeft}>
+            <Ionicons name="paw" size={20} color="#4CAF50" />
+            <View>
+              <Text style={styles.petSelectorLabel}>Agendando para:</Text>
+              <Text style={styles.petSelectorText}>
+                {selectedPet ? selectedPet.name : 'Selecione um Pet'}
+              </Text>
+            </View>
+          </View>
+          <Ionicons name="swap-vertical" size={20} color="#666" />
         </TouchableOpacity>
       </View>
+
       <ScrollView>
-      <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Agende exames e consultas</Text>
-          <FlatList
-            data={examAndConsultationServices}
-            renderItem={renderService}
-            keyExtractor={(item) => item.id}
-            scrollEnabled={false}
-          />
-          <Text style={styles.sectionTitle}>Agende Banho e tosa</Text>
-          <FlatList
-            data={bathAndGroomingServices}
-            renderItem={renderService}
-            keyExtractor={(item) => item.id}
-            scrollEnabled={false}
-          />
-      </View>
+        <View style={styles.section}>
+          {displayExams.length > 0 && (
+            <>
+              <Text style={styles.sectionTitle}>Consultas e Procedimentos</Text>
+              <FlatList
+                data={displayExams}
+                renderItem={renderService}
+                keyExtractor={(item) => item.id}
+                scrollEnabled={false}
+              />
+            </>
+          )}
+          {displayBath.length > 0 && (
+            <>
+              <Text style={[styles.sectionTitle, { marginTop: 20 }]}>Estética e Higiene</Text>
+              <FlatList
+                data={displayBath}
+                renderItem={renderService}
+                keyExtractor={(item) => item.id}
+                scrollEnabled={false}
+              />
+            </>
+          )}
+          {displayExams.length === 0 && displayBath.length === 0 && (
+            <Text style={styles.emptyText}>Nenhum serviço encontrado nesta categoria.</Text>
+          )}
+        </View>
       </ScrollView>
 
       <Modal visible={showPetModal} transparent animationType="slide">
@@ -126,29 +175,111 @@ const styles = StyleSheet.create({
   },
   // --- Header & Pet Selector ---
   header: {
-    padding: 20,
+    paddingTop: 40,
+    paddingHorizontal: 20,
+    paddingBottom: 15,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: '#F0F0F0',
+  },
+  filterScroll: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 5,
+    paddingVertical: 5,
+  },
+  filterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#F0F9F1',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  filterChipActive: {
+    backgroundColor: '#4CAF50',
+    borderColor: '#4CAF50',
+  },
+  filterChipText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#4CAF50',
+  },
+  filterChipTextActive: {
+    color: '#FFFFFF',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 15,
   },
   headerTitle: {
-    marginBottom: 12,
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 26,
+    fontWeight: '800', // Um pouco mais de peso
+    color: '#1A1A1A',
+  },
+  filterStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: -2,
+  },
+  activeDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#4CAF50',
+    marginRight: 6,
+  },
+  filterSubtitle: {
+    fontSize: 12,
+    color: '#666',
+    fontWeight: '500',
+  },
+  clearBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F5E9', // Verde bem clarinho
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#C8E6C9',
+    marginTop: 20,
+    gap: 6,
+  },
+  clearText: {
+    color: '#2E7D32', // Verde mais escuro para contraste
+    fontSize: 13,
+    fontWeight: '700',
   },
   petSelector: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    padding: 12,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
+    justifyContent: 'space-between',
+    padding: 14,
+    backgroundColor: '#F8F9FA',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#EEE',
+  },
+  petSelectorLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  petSelectorLabel: {
+    fontSize: 10,
+    color: '#888',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   petSelectorText: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '700',
     color: '#333',
   },
   // --- Sections & Lists ---
@@ -262,6 +393,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#FFF',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#999',
+    textAlign: 'center',
+    marginTop: 40,
+    paddingHorizontal: 40,
+    lineHeight: 24,
+    fontStyle: 'italic',
   },
 });
 

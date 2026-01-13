@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E0E0E0',
   },
   headerTitle: {
+    marginTop: 20,
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',

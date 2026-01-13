@@ -1,53 +1,59 @@
-import { useDebugValue, useEffect, useState } from 'react';
+// viewmodel/ServicesViewModel.ts
+import { useEffect, useState, useMemo } from 'react';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { Alert } from 'react-native';
-import { useCart } from '../../src/context/CartContext';
+import { useCart } from '../usecase/Cart/CartContext';
 import Service from '../../src/model/entities/service';
 import Pet from '../../src/model/entities/pet';
 import User from '../../src/model/entities/user';
 import { serviceUseCases, petUseCases, authUseCases } from '../../src/di/container';
 
-
-
 export const useServicesViewModel = () => {
+  const route = useRoute<any>();
+  const navigation = useNavigation();
+
+  // Estados de dados
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const { addItem } = useCart();
-  
   const [services, setServices] = useState<Service[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  
+  // Estados de UI
   const [showPetModal, setShowPetModal] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<string | undefined>(route.params?.filter);
 
+  const { addItem } = useCart();
+
+  // Monitora mudanças de parâmetros de navegação (Deep Linking/Nested Nav)
+  useEffect(() => {
+    if (route.params?.filter !== activeFilter) {
+      setActiveFilter(route.params?.filter);
+    }
+  }, [route.params?.filter]);
+
+  // Ciclo de vida: Carregamento inicial e Auth
   useEffect(() => {
     loadServices();
-  }, []);
-
-  useEffect(() => {
+    
     const unsubscribe = authUseCases.onAuthStateChanged((user) => {
       setCurrentUser(user);
       if (user?.uID) {
-        console.log("🔍 Carregando pets para o uID:", user.uID);
         loadPets(user.uID);
       } else {
         setPets([]);
+        setSelectedPet(null);
       }
     });
 
-    // Retorna função de limpeza
-    return () => {
-      if (typeof unsubscribe === 'function') {
-        unsubscribe();
-      }
-    };
+    return () => unsubscribe?.();
   }, []);
-    
 
-
+  // Busca de dados no Repositório
   const loadServices = async () => {
     try {
       const fetchedServices = await serviceUseCases.getAllServices();
       setServices(fetchedServices);
     } catch (error) {
-      console.error(error);
       Alert.alert('Erro', 'Não foi possível carregar os serviços.');
     }
   };
@@ -56,22 +62,48 @@ export const useServicesViewModel = () => {
     try {
       const fetchedPets = await petUseCases.getAllPetsByClientId(clientId);
       setPets(fetchedPets);
-      if (fetchedPets.length > 0) {
-        setSelectedPet(fetchedPets[0]);
-      }
+      if (fetchedPets.length > 0) setSelectedPet(fetchedPets[0]);
     } catch (error) {
-      console.error(error);
       Alert.alert('Erro', 'Não foi possível carregar os pets.');
     }
   };
 
+  // Lógica de Filtragem (Memorizada para performance)
+  const filteredServices = useMemo(() => {
+    if (!activeFilter) return services;
+
+    return services.filter((s) => {
+      const name = s.name.toLowerCase();
+      if (activeFilter === 'bath') {
+        return name.includes('banho') || name.includes('tosa');
+      }
+      if (activeFilter === 'health') {
+        return ['consulta', 'exame', 'raio', 'cirurgia', 'ultrassonografia'].some((term) => 
+          name.includes(term)
+        );
+      }
+      return true;
+    });
+  }, [services, activeFilter]);
+
+  // Categorias para exibição na View
+  const displayExams = useMemo(() => 
+    filteredServices.filter((s) =>
+      ['consulta', 'exame', 'raio', 'cirurgia'].some((t) => s.name.toLowerCase().includes(t))
+    ), [filteredServices]);
+
+  const displayBath = useMemo(() => 
+    filteredServices.filter((s) =>
+      ['banho', 'tosa'].some((t) => s.name.toLowerCase().includes(t))
+    ), [filteredServices]);
+
+  // Ações da View
   const addServiceToCart = (service: Service) => {
-    // Verifica se há usuário logado
     if (!currentUser) {
       Alert.alert('Erro', 'Você precisa estar logado para enviar o pedido.');
       return;
     }
-
+    
     if (!selectedPet) {
       Alert.alert('Atenção', 'Selecione um pet antes de agendar.');
       return;
@@ -86,10 +118,7 @@ export const useServicesViewModel = () => {
       quantity: 1,
     });
 
-    Alert.alert(
-      'Sucesso',
-      `${service.name} adicionado para ${selectedPet.name}!`
-    );
+    Alert.alert('Sucesso', `${service.name} adicionado para ${selectedPet.name}!`);
   };
 
   const selectPet = (pet: Pet) => {
@@ -97,27 +126,37 @@ export const useServicesViewModel = () => {
     setShowPetModal(false);
   };
 
-  const examAndConsultationServices = services.filter((s) =>
-    ['Consulta', 'Exame', 'Raio', 'Cirurgia', 'Ultrasonografia'].some((term) =>
-      s.name.includes(term)
-    )
-  );
+  const clearFilter = () => {
+    navigation.setParams(undefined);
+    setActiveFilter(undefined);
+  };
+  
+  const getFilterName = () => {
+    if (activeFilter === 'bath') return 'Banho e Tosa';
+    if (activeFilter === 'health') return 'Saúde';
+    return '';
+  };
 
-  const bathAndGroomingServices = services.filter((s) =>
-    ['Banho', 'Tosa'].some((term) => s.name.includes(term))
-  );
+  const categories = [
+    { id: undefined, label: 'Todos', icon: 'grid-outline' },
+    { id: 'bath', label: 'Banho e Tosa', icon: 'cut-outline' },
+    { id: 'health', label: 'Saúde', icon: 'medkit-outline' },
+  ];
 
   return {
-    services,
     pets,
     selectedPet,
     showPetModal,
-
-    examAndConsultationServices,
-    bathAndGroomingServices,
-
+    displayExams,
+    displayBath,
+    isFiltered: !!activeFilter,
     setShowPetModal,
     selectPet,
     addServiceToCart,
+    clearFilter,
+    activeFilterName: getFilterName(),
+    activeFilter,    // Para saber qual chip destacar
+    setActiveFilter, // Para trocar o filtro ao clicar no chip
+    categories,
   };
 };

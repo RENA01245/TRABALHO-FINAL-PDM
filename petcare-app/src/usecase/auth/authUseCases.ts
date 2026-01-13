@@ -67,15 +67,7 @@ export default class AuthUseCases implements IAuthUseCases {
 
     onAuthStateChanged(callback: (user: User | null) => void): () => void {
         return this.authService.onAuthStateChanged(async (authUser) => {
-            if (authUser && authUser.uID) {
-                // PROTEÇÃO: Se o ID for de mock ("u1"), ignore e force logout
-                if (authUser.uID === 'u1' || authUser.uID.length < 20) {
-                    console.warn("⚠️ Sessão de mock detectada no banco real. Limpando...");
-                    this.logout();
-                    callback(null);
-                    return;
-                }
-    
+            if (authUser) {
                 try {
                     const fullUser = await this.userRepository.getUserByID(authUser.uID);
                     callback(fullUser);

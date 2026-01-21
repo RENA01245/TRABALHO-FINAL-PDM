@@ -1,0 +1,210 @@
+import  Product  from '../../src/model/entities/product';
+import  Service  from '../../src/model/entities/service';
+import  Pet  from '../../src/model/entities/pet';
+import  User  from '../../src/model/entities/user';
+import { PetAttendance } from '@/model/entities/petAttendance';
+
+
+export const mockAttendances: PetAttendance[] = [
+    {
+      id: 'att-001',
+      petId: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c2d', // ID do Thor no seu MockPetRepository
+      petName: 'Rex',
+      serviceName: 'Banho e Tosa',
+      status: 'Em Cirurgia',
+      lastUpdate: new Date(),
+      clientId: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
+      serviceId: 's3',
+    },
+    {
+      id: 'att-002',
+      petId: 'c7b3d8e0-1b1d-4b2f-9b1d-7b3d8e0b1d2f', // ID da Mel
+      petName: 'Mimi',
+      serviceName: 'Cirurgia Castração',
+      status: 'Em Cirurgia',
+      lastUpdate: new Date(),
+      clientId: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
+      serviceId: 's7'
+    }
+  ];
+
+export const mockProducts: Product[] = [
+  {
+    id: '1',
+    name: 'Comedouro automático para cães',
+    description: 'Comedouro automático com timer para alimentação programada do seu pet.',
+    price: 99.99,
+    imageUrl: 'https://via.placeholder.com/300x300?text=Comedouro+Automatico',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: '2',
+    name: 'Brinquedo para cães',
+    description: 'Brinquedo resistente e durável para entreter seu cão.',
+    price: 29.99,
+    imageUrl: 'https://via.placeholder.com/300x300?text=Brinquedo+Cao',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: '3',
+    name: 'Cama para pets',
+    description: 'Cama confortável e macia para seu pet descansar.',
+    price: 149.99,
+    imageUrl: 'https://via.placeholder.com/300x300?text=Cama+Pet',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: '4',
+    name: 'Coleira ajustável',
+    description: 'Coleira resistente e ajustável para passeios seguros.',
+    price: 39.99,
+    imageUrl: 'https://via.placeholder.com/300x300?text=Coleira',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: '5',
+    name: 'Ração Premium',
+    description: 'Ração premium com todos os nutrientes necessários.',
+    price: 89.99,
+    imageUrl: 'https://via.placeholder.com/300x300?text=Racao+Premium',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: '6',
+    name: 'Tapete higiênico',
+    description: 'Tapete higiênico absorvente e descartável.',
+    price: 24.99,
+    imageUrl: 'https://via.placeholder.com/300x300?text=Tapete+Higienico',
+    createdAt: new Date().toISOString(),
+  },
+];
+
+
+export const mockServices: Service[] = [
+  {
+    id: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c01',
+    name: 'Banho',
+    description: 'Banho completo com produtos de qualidade.',
+    price: 50.0,
+    estimatedDuration: 60,
+    type: 'service',
+  },
+  {
+    id: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c02',
+    name: 'Tosa',
+    description: 'Tosa profissional para seu pet.',
+    price: 60.0,
+    estimatedDuration: 60,
+    type: 'service',
+  },
+  {
+    id: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c03',
+    name: 'Banho e Tosa',
+    description: 'Pacote completo: banho + tosa.',
+    price: 100.0,
+    estimatedDuration: 120,
+    type: 'service',
+  },
+  {
+    id: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c04',
+    name: 'Consulta Veterinária',
+    description: 'Consulta completa com veterinário especializado.',
+    price: 120.0,
+    estimatedDuration: 45,
+    type: 'consultation',
+  },
+  {
+    id: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c05',
+    name: 'Exames Laboratoriais',
+    description: 'Pacote de exames laboratoriais completos.',
+    price: 150.0,
+    estimatedDuration: 90,
+    type: 'exam',
+  },
+  {
+    id: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c06',
+    name: 'Raio X --=',
+    description: 'Exame de raio X para diagnóstico.',
+    price: 200.0,
+    estimatedDuration: 30,
+    type: 'exam',
+  },
+  {
+    id: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c07',
+    name: 'Cirurgia',
+    description: 'Procedimento cirúrgico com anestesia.',
+    price: 500.0,
+    estimatedDuration: 240,
+    type: 'procedure',
+  },
+  {
+    id: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c08',
+    name: 'Ultrasonografia',
+    description: 'Exame de ultrassom para diagnóstico.',
+    price: 180.0,
+    estimatedDuration: 40,
+    type: 'exam',
+  },
+  {
+    id: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c09',
+    name: 'Exames Laboratoriais',
+    description: 'Pacote de exames laboratoriais completos.',
+    price: 150.0,
+    estimatedDuration: 90,
+    type: 'exam',
+  },
+  {
+    id: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c10',
+    name: 'Raio X',
+    description: 'Exame de raio X para diagnóstico.',
+    price: 200.0,
+    estimatedDuration: 30,
+    type: 'exam',
+  },
+  {
+    id: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c11',
+    name: 'Cirurgia',
+    description: 'Procedimento cirúrgico com anestesia.',
+    price: 500.0,
+    estimatedDuration: 240,
+    type: 'procedure',
+  },
+];
+
+
+export const mockPets: Pet[] = [
+  {
+    id: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c2d',
+    clientId: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
+    name: 'Rex',
+    breed: 'Labrador',
+    age: 5,
+    observations: 'Muito dócil e brincalhão',
+  },
+  {
+    id: 'c7b3d8e0-1b1d-4b2f-9b1d-7b3d8e0b1d2f',
+    clientId: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
+    name: 'Mimi',
+    breed: 'Siamês',
+    age: 3,
+    observations: null,
+  },
+  {
+    id: 'a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1asf',
+    clientId: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
+    name: 'Buddy',
+    breed: 'Golden Retriever',
+    age: 2,
+    observations: 'Precisa de atenção com alimentação',
+  },
+];
+
+export const mockUser: User[] = [
+  {
+    uID: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
+    userName: 'Gustavo Nery',
+    email: 'joao@email.com',
+    telefone: '55 86 999048018',
+    pets: [mockPets[0], mockPets[1]],
+  }
+];

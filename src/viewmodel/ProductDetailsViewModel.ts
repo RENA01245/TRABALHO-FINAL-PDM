@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Alert } from 'react-native';
 import { useCart } from '../usecase/Cart/CartContext';
+import { useAlert } from '../view/context/AlertContext';
 import Product from '../../src/model/entities/product';
 
 export const useProductDetailsViewModel = (product: Product) => {
+  const { showAlert } = useAlert();
   const [quantity, setQuantity] = useState(1);
   const { addItem } = useCart();
 
@@ -18,7 +19,7 @@ export const useProductDetailsViewModel = (product: Product) => {
   };
 
   const addToCart = () => {
-    Alert.alert(
+    showAlert(
       'Adicionar ao Carrinho',
       `Deseja adicionar ${quantity}x ${product.name} ao carrinho?`,
       [
@@ -38,7 +39,7 @@ export const useProductDetailsViewModel = (product: Product) => {
               quantity,
             });
 
-            Alert.alert(
+            showAlert(
               'Sucesso',
               `${quantity}x ${product.name} adicionado ao carrinho!`
             );

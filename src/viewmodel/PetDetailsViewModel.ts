@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { petUseCases } from '../di/container';
 import Pet from '../model/entities/pet';
-import { Alert } from 'react-native';
+import { useAlert } from '../view/context/AlertContext';
 import { storageService } from '../infra/services/supabase/supabaseStorageService';
 
 export const usePetDetailsViewModel = (navigation: any, initialPet: Pet) => {
+  const { showAlert } = useAlert();
   const [pet, setPet] = useState<Pet>(initialPet);
   const [loading, setLoading] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
@@ -17,7 +18,7 @@ export const usePetDetailsViewModel = (navigation: any, initialPet: Pet) => {
   const [editImageUri, setEditImageUri] = useState<string | null>(null);
 
   const handleDeletePet = async () => {
-    Alert.alert(
+    showAlert(
       "Excluir Pet",
       "Tem certeza que deseja excluir este pet?",
       [
@@ -43,7 +44,7 @@ export const usePetDetailsViewModel = (navigation: any, initialPet: Pet) => {
               navigation.goBack();
             } catch (error) {
               console.error(error);
-              Alert.alert("Erro", "Não foi possível excluir o pet.");
+              showAlert("Erro", "Não foi possível excluir o pet.");
             } finally {
               setLoading(false);
             }
@@ -55,7 +56,7 @@ export const usePetDetailsViewModel = (navigation: any, initialPet: Pet) => {
 
   const handleUpdatePet = async () => {
     if (!editName.trim()) {
-      Alert.alert("Erro", "O nome do pet é obrigatório.");
+      showAlert("Erro", "O nome do pet é obrigatório.");
       return;
     }
 
@@ -93,7 +94,7 @@ export const usePetDetailsViewModel = (navigation: any, initialPet: Pet) => {
       setEditImageUri(null);
     } catch (error) {
       console.error(error);
-      Alert.alert("Erro", "Não foi possível atualizar o pet.");
+      showAlert("Erro", "Não foi possível atualizar o pet.");
     } finally {
       setLoading(false);
     }

@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Alert } from 'react-native';
 import { useCart } from '../usecase/Cart/CartContext';
+import { useAlert } from '../view/context/AlertContext';
 import Product from '../../src/model/entities/product';
 import { productUseCases } from '../../src/di/container';
 
 export const useShopViewModel = () => {
   const { addItem } = useCart();
+  const { showAlert } = useAlert();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -20,14 +21,14 @@ export const useShopViewModel = () => {
       setProducts(fetchedProducts);
     } catch (error) {
       console.error(error);
-      Alert.alert('Erro', 'Não foi possível carregar os produtos.');
+      showAlert('Erro', 'Não foi possível carregar os produtos.');
     } finally {
       setLoading(false);
     }
   };
 
   const addProductToCart = (product: Product) => {
-    Alert.alert(
+    showAlert(
       'Adicionar ao Carrinho',
       `Deseja adicionar ${product.name} ao carrinho?`,
       [
@@ -47,7 +48,7 @@ export const useShopViewModel = () => {
               quantity: 1,
             });
 
-            Alert.alert('Sucesso', `${product.name} adicionado ao carrinho!`);
+            showAlert('Sucesso', `${product.name} adicionado ao carrinho!`);
           },
         },
       ]

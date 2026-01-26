@@ -1,7 +1,7 @@
 // viewmodel/ServicesViewModel.ts
 import { useEffect, useState, useMemo } from 'react';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Alert } from 'react-native';
+import { useAlert } from '../view/context/AlertContext';
 import { useCart } from '../usecase/Cart/CartContext';
 import Service from '../../src/model/entities/service';
 import Pet from '../../src/model/entities/pet';
@@ -11,6 +11,7 @@ import { serviceUseCases, petUseCases, authUseCases } from '../../src/di/contain
 export const useServicesViewModel = () => {
   const route = useRoute<any>();
   const navigation = useNavigation();
+  const { showAlert } = useAlert();
 
   // Estados de dados
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -54,7 +55,7 @@ export const useServicesViewModel = () => {
       const fetchedServices = await serviceUseCases.getAllServices();
       setServices(fetchedServices);
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível carregar os serviços.');
+      showAlert('Erro', 'Não foi possível carregar os serviços.');
     }
   };
 
@@ -64,7 +65,7 @@ export const useServicesViewModel = () => {
       setPets(fetchedPets);
       if (fetchedPets.length > 0) setSelectedPet(fetchedPets[0]);
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível carregar os pets.');
+      showAlert('Erro', 'Não foi possível carregar os pets.');
     }
   };
 
@@ -101,16 +102,16 @@ export const useServicesViewModel = () => {
   const addServiceToCart = (service: Service) => {
     // Verifica se há usuário logado
     if (!currentUser) {
-      Alert.alert('Erro', 'Você precisa estar logado para enviar o pedido.');
+      showAlert('Erro', 'Você precisa estar logado para enviar o pedido.');
       return;
     }
     
     if (!selectedPet) {
-      Alert.alert('Atenção', 'Selecione um pet antes de agendar.');
+      showAlert('Atenção', 'Selecione um pet antes de agendar.');
       return;
     }
 
-    Alert.alert(
+    showAlert(
       'Confirmar Agendamento',
       `Deseja agendar ${service.name} para ${selectedPet.name}?`,
       [
@@ -131,7 +132,7 @@ export const useServicesViewModel = () => {
               quantity: 1,
             });
 
-            Alert.alert('Sucesso', `${service.name} adicionado para ${selectedPet.name}!`);
+            showAlert('Sucesso', `${service.name} adicionado para ${selectedPet.name}!`);
           },
         },
       ]

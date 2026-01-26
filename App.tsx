@@ -1,12 +1,15 @@
 import React from 'react';
 import  RootNavigator  from './src/navigation/RootNavigator';
 import { CartProvider } from './src/usecase/Cart/CartContext';
+import { AlertProvider } from './src/view/context/AlertContext';
 
 const App = () => {
   return (
-    <CartProvider>
-        <RootNavigator />
-    </CartProvider>
+    <AlertProvider>
+      <CartProvider>
+          <RootNavigator />
+      </CartProvider>
+    </AlertProvider>
   );
 };
 

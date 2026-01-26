@@ -4,9 +4,10 @@ import { petUseCases, authUseCases } from '../di/container';
 import { storageService } from '../infra/services/supabase/supabaseStorageService';
 import Pet from '../model/entities/pet';
 import User from '../model/entities/user';
-import { Alert } from 'react-native';
+import { useAlert } from '../view/context/AlertContext';
 
 export const useSettingsViewModel = (navigation: any) => {
+  const { showAlert } = useAlert();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(false);
@@ -97,10 +98,10 @@ export const useSettingsViewModel = (navigation: any) => {
       await authUseCases.updateUser(updatedUser);
       setCurrentUser(updatedUser); // Update local state immediately
       setIsEditProfileModalVisible(false);
-      Alert.alert('Sucesso', 'Perfil atualizado com sucesso!');
+      showAlert('Sucesso', 'Perfil atualizado com sucesso!');
     } catch (error) {
       console.error('Erro ao atualizar perfil:', error);
-      Alert.alert('Erro', 'Falha ao atualizar perfil. Tente novamente.');
+      showAlert('Erro', 'Falha ao atualizar perfil. Tente novamente.');
     } finally {
       setUpdatingProfile(false);
     }
@@ -109,7 +110,7 @@ export const useSettingsViewModel = (navigation: any) => {
   const handleAddPet = async () => {
     if (!currentUser?.uID) return;
     if (!newPetName.trim()) {
-      alert('Por favor, informe o nome do pet.');
+      showAlert('Erro', 'Por favor, informe o nome do pet.');
       return;
     }
 
@@ -147,7 +148,7 @@ export const useSettingsViewModel = (navigation: any) => {
       setIsAddPetModalVisible(false);
     } catch (error) {
       console.error('Erro ao adicionar pet:', error);
-      Alert.alert('Erro', 'Erro ao adicionar pet. Tente novamente.');
+      showAlert('Erro', 'Erro ao adicionar pet. Tente novamente.');
     } finally {
       setAddingPet(false);
     }

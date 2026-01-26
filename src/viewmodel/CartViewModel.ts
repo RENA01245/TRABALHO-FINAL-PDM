@@ -1,5 +1,6 @@
-import { Alert, Linking } from 'react-native';
+import { Linking } from 'react-native';
 import { useCart } from '@/usecase/Cart/CartContext';
+import { useAlert } from '../view/context/AlertContext';
 import { authUseCases } from '@/di/container';
 import { useState, useEffect } from 'react';
 import User from '@/model/entities/user';
@@ -11,6 +12,7 @@ import User from '@/model/entities/user';
  */
 export const useCartViewModel = () => {
   const { items, updateQuantity, removeItem, getTotal, clearCart } = useCart();
+  const { showAlert } = useAlert();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   // Carrega o usuário atual usando o sistema de DI
   // Isso funciona tanto com mocks quanto com banco real
@@ -34,13 +36,13 @@ export const useCartViewModel = () => {
 
   const sendOrderToWhatsApp = async () => {
     if (items.length === 0) {
-      Alert.alert('Carrinho vazio', 'Adicione itens ao carrinho primeiro!');
+      showAlert('Carrinho vazio', 'Adicione itens ao carrinho primeiro!');
       return;
     }
 
     // Verifica se há usuário logado
     if (!currentUser) {
-      Alert.alert('Erro', 'Você precisa estar logado para enviar o pedido.');
+      showAlert('Erro', 'Você precisa estar logado para enviar o pedido.');
       return;
     }
 
@@ -82,7 +84,7 @@ export const useCartViewModel = () => {
 
     const supported = await Linking.canOpenURL(url);
     if (!supported) {
-      Alert.alert(
+      showAlert(
         'WhatsApp não instalado',
         'Por favor, instale o WhatsApp para enviar o pedido.'
       );

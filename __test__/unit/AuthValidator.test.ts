@@ -143,5 +143,40 @@ describe("AuthValidator", () => {
         AuthValidator.validateSignUp(validName, validEmail, minPassword);
       }).not.toThrow();
     });
+  describe("validateStrongPassword", () => {
+    it("deve lançar erro se a senha tiver menos de 8 caracteres", () => {
+      expect(() => AuthValidator.validateStrongPassword("Ab1!")).toThrow(
+        new ValidationError("A senha deve ter pelo menos 8 caracteres.")
+      );
+    });
+
+    it("deve lançar erro se a senha não tiver letra maiúscula", () => {
+      expect(() => AuthValidator.validateStrongPassword("abcdef1!")).toThrow(
+        new ValidationError("A senha deve conter pelo menos uma letra maiúscula.")
+      );
+    });
+
+    it("deve lançar erro se a senha não tiver letra minúscula", () => {
+      expect(() => AuthValidator.validateStrongPassword("ABCDEF1!")).toThrow(
+        new ValidationError("A senha deve conter pelo menos uma letra minúscula.")
+      );
+    });
+
+    it("deve lançar erro se a senha não tiver número", () => {
+      expect(() => AuthValidator.validateStrongPassword("Abcdefgh!")).toThrow(
+        new ValidationError("A senha deve conter pelo menos um número.")
+      );
+    });
+
+    it("deve lançar erro se a senha não tiver caractere especial", () => {
+      expect(() => AuthValidator.validateStrongPassword("Abcdefg1")).toThrow(
+        new ValidationError("A senha deve conter pelo menos um caractere especial.")
+      );
+    });
+
+    it("não deve lançar erro para senha forte válida", () => {
+      expect(() => AuthValidator.validateStrongPassword("Abcdef1!")).not.toThrow();
+    });
   });
+});
 });

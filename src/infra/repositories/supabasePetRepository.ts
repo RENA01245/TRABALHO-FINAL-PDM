@@ -63,7 +63,8 @@ export class SupabasePetRepository implements IPetRepository {
         idade: pet.age,
         observacoes: pet.observations,
         foto_url: pet.imageUrl,
-      });
+      })
+      .select(); // Força o retorno do registro inserido para garantir consistência
 
     if (error) {
       throw new Error(error.message);

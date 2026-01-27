@@ -39,10 +39,11 @@ export const useOrderTrackingViewModel = () => {
   const getStatusDetails = (status: string) => {
     const statusMap: { [key: string]: { color: string; icon: string; desc: string } } = {
       'aguardando': { color: '#FFA500', icon: 'hourglass-outline', desc: 'Seu pet está relaxando na espera.' },
-      'em banho': { color: '#2196F3', icon: 'water-outline', desc: 'Hora da limpeza e relaxamento!' },
-      'na tosa': { color: '#9C27B0', icon: 'cut-outline', desc: 'Ficando bonitão no estilo.' },
-      'em cirurgia': { color: '#F44336', icon: 'medkit-outline', desc: 'Procedimento em andamento. Equipe focada.' },
-      'recuperação': { color: '#FFEB3B', icon: 'bed-outline', desc: 'Acordando da anestesia com carinho.' },
+      'em_banho': { color: '#2196F3', icon: 'water-outline', desc: 'Hora da limpeza e relaxamento!' },
+      'na_tosa': { color: '#9C27B0', icon: 'cut-outline', desc: 'Ficando bonitão no estilo.' },
+      'em_cirurgia': { color: '#F44336', icon: 'medkit-outline', desc: 'Procedimento em andamento. Equipe focada.' }, 
+      'recuperacao': { color: '#FFEB3B', icon: 'bed-outline', desc: 'Acordando da anestesia com carinho.' },
+      'em_consulta': { color: '#2196F3', icon: 'stethoscope-outline', desc: 'Sendo examinado pelo veterinário.' },
       'pronto': { color: '#4CAF50', icon: 'checkmark-circle-outline', desc: 'Tudo pronto! Pode vir buscar.' }
     };
 

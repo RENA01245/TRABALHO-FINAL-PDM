@@ -8,7 +8,8 @@ const LoginScreen = ({ navigation }: any) => {
     email, setEmail, 
     password, setPassword, 
     loading, error, 
-    handleLogin, handleSignUp 
+    handleLogin, handleSignUp, 
+    handleGoogleLogin, 
   } = useLoginViewModel(navigation);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -60,9 +61,6 @@ const LoginScreen = ({ navigation }: any) => {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>Esqueceu a senha?</Text>
-            </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.loginButton}
@@ -82,7 +80,7 @@ const LoginScreen = ({ navigation }: any) => {
                 <View style={styles.dividerLine} />
             </View>
 
-            <TouchableOpacity style={styles.googleButton}>
+            <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
                 <Ionicons name="logo-google" size={20} color="#EA4335" style={styles.googleIcon} />
                 <Text style={styles.googleButtonText}>Entrar com Google</Text>
             </TouchableOpacity>
@@ -156,14 +154,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: 30,
-  },
-  forgotPasswordText: {
-    color: '#999',
-    fontSize: 14,
-  },
+
   loginButton: {
     backgroundColor: '#E53935', // Cor avermelhada
     borderRadius: 25, // Botão arredondado

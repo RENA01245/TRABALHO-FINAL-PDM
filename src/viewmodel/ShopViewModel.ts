@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Alert } from 'react-native';
 import { useCart } from '../usecase/Cart/CartContext';
 import Product from '../../src/model/entities/product';
@@ -9,11 +10,7 @@ export const useShopViewModel = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
       setLoading(true);
       const fetchedProducts = await productUseCases.getAllProducts();
@@ -24,7 +21,13 @@ export const useShopViewModel = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadProducts();
+    }, [loadProducts])
+  );
 
   const addProductToCart = (product: Product) => {
     Alert.alert(

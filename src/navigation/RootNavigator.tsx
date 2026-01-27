@@ -163,9 +163,22 @@ const MainTabNavigator = () => {
   );
 };
 
+import * as Linking from 'expo-linking';
+
+const prefix = Linking.createURL('/');
+
+const linking = {
+  prefixes: [prefix, 'petcare://'],
+  config: {
+    screens: {
+      // Outras rotas se necessário
+    },
+  },
+};
+
 const RootNavigator = () => {
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <Stack.Navigator>
         <Stack.Screen 
           name="MainTabs" 

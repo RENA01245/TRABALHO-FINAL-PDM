@@ -134,6 +134,9 @@ export const useSettingsViewModel = (navigation: any) => {
 
       await petUseCases.createPet(newPet);
       
+      // Pequeno delay para garantir que o banco processou a inserção antes de buscar
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       // Atualiza a lista de pets
       const updatedPets = await petUseCases.getAllPetsByClientId(currentUser.uID);
       setPets(updatedPets);

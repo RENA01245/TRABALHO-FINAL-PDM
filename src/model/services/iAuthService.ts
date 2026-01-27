@@ -4,6 +4,8 @@ export interface IAuthService {
   login(userName: string, password: string): Promise<User>;
 
   signup(userName: string, password: string): Promise<User>;
+  
+  loginWithGoogle(): Promise<User>;
 
   logout(): Promise<void>;
 

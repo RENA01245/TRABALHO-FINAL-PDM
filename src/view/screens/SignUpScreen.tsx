@@ -10,7 +10,7 @@ const SignUpScreen = ({ navigation }: any) => {
     password, setPassword,
     confirmPassword, setConfirmPassword,
     loading, error,
-    handleSignUp, goToLogin
+    handleSignUp, handleGoogleSignUp, goToLogin
   } = useSignUpViewModel(navigation);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -104,9 +104,9 @@ const SignUpScreen = ({ navigation }: any) => {
                 <View style={styles.dividerLine} />
             </View>
 
-            <TouchableOpacity style={styles.googleButton}>
+            <TouchableOpacity style={styles.googleButton} onPress={handleGoogleSignUp}>
                 <Ionicons name="logo-google" size={20} color="#EA4335" style={styles.googleIcon} />
-                <Text style={styles.googleButtonText}>Entrar com Google</Text>
+                <Text style={styles.googleButtonText}>Cadastrar com Google</Text>
             </TouchableOpacity>
 
             <View style={styles.footer}>

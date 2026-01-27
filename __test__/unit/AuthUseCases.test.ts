@@ -89,9 +89,38 @@ describe("AuthUseCases", () => {
       await mockAuthService.signup(email, password);
 
       // Act & Assert: Deve lançar AuthError porque usuário não está no repositório
-      await expect(authUseCases.login(email, password)).rejects.toThrow(
-        AuthError
-      );
+      // OBS: Agora com o auto-healing, ele cria o usuário em vez de lançar erro!
+      // Então esse teste deve passar verificando se o usuário foi criado e retornado
+      const loggedUser = await authUseCases.login(email, password);
+      expect(loggedUser).toBeDefined();
+      expect(loggedUser.email).toBe(email);
+    });
+
+    it("deve recuperar-se automaticamente de race condition na criação automática de usuário (Duplicate Key)", async () => {
+      // Arrange
+      const email = "race@condition.com";
+      const password = "senha123";
+      
+      // 1. Registra no Auth Service (Simula usuário criado via OAuth ou SignUp anterior)
+      const authUser = await mockAuthService.signup(email, password);
+      
+      // 2. Mock getUserByID para retornar null (Simula RLS ou delay)
+      // Precisamos fazer cast para any ou usar spyOn para sobrescrever o método da instância mockada
+      jest.spyOn(mockUserRepository, 'getUserByID').mockResolvedValue(null);
+      
+      // 3. Mock createUser para lançar erro de Duplicate Key (Simula que usuário já existe)
+      jest.spyOn(mockUserRepository, 'createUser').mockImplementation(async () => {
+        throw new Error('duplicate Key value violates unique constraint "users_pkey"');
+      });
+
+      // Act
+      const loggedUser = await authUseCases.login(email, password);
+
+      // Assert
+      expect(loggedUser).toBeDefined();
+      expect(loggedUser.email).toBe(email);
+      // Verifica se tentou criar
+      expect(mockUserRepository.createUser).toHaveBeenCalled();
     });
   });
 

@@ -41,14 +41,33 @@ export const useSignUpViewModel = (navigation: any) => {
       // Como o AuthStateChanged é global, se logar, a tela de Settings vai atualizar sozinha.
       // Mas precisamos sair da tela de SignUp.
       
-      // Vamos voltar 2 níveis (SignUp -> Login -> Settings) ou navegar para Settings.
-      navigation.navigate('Settings');
+      // Vamos navegar para a tela principal (MainTabs)
+      navigation.navigate('MainTabs');
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'Erro ao criar conta. Tente novamente.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleSignUp = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+          await authUseCases.loginWithGoogle();
+          // OAuth serve tanto para login quanto para signup
+          // Navega para a tela principal
+          navigation.navigate('MainTabs');
+      } catch (err: any) {
+           console.error(err);
+           if (err.message && err.message.includes('cancelado')) {
+               return;
+           }
+           setError(err.message || 'Erro no cadastro com Google.');
+      } finally {
+          setLoading(false);
+      }
   };
 
   const goToLogin = () => {
@@ -67,6 +86,7 @@ export const useSignUpViewModel = (navigation: any) => {
     loading,
     error,
     handleSignUp,
+    handleGoogleSignUp,
     goToLogin
   };
 };

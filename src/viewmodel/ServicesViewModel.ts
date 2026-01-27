@@ -1,9 +1,9 @@
 // viewmodel/ServicesViewModel.ts
-import { useEffect, useState, useMemo } from 'react';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Alert } from 'react-native';
 import { useCart } from '../usecase/Cart/CartContext';
-import Service from '../../src/model/entities/service';
+import { Service } from '../../src/model/entities/service';
 import Pet from '../../src/model/entities/pet';
 import User from '../../src/model/entities/user';
 import { serviceUseCases, petUseCases, authUseCases } from '../../src/di/container';
@@ -33,13 +33,9 @@ export const useServicesViewModel = () => {
 
   // Ciclo de vida: Carregamento inicial e Auth
   useEffect(() => {
-    loadServices();
-    
     const unsubscribe = authUseCases.onAuthStateChanged((user) => {
       setCurrentUser(user);
-      if (user?.uID) {
-        loadPets(user.uID);
-      } else {
+      if (!user) {
         setPets([]);
         setSelectedPet(null);
       }
@@ -49,16 +45,16 @@ export const useServicesViewModel = () => {
   }, []);
 
   // Busca de dados no Repositório
-  const loadServices = async () => {
+  const loadServices = useCallback(async () => {
     try {
       const fetchedServices = await serviceUseCases.getAllServices();
       setServices(fetchedServices);
     } catch (error) {
       Alert.alert('Erro', 'Não foi possível carregar os serviços.');
     }
-  };
+  }, []);
 
-  const loadPets = async (clientId: string) => {
+  const loadPets = useCallback(async (clientId: string) => {
     try {
       const fetchedPets = await petUseCases.getAllPetsByClientId(clientId);
       setPets(fetchedPets);
@@ -66,7 +62,17 @@ export const useServicesViewModel = () => {
     } catch (error) {
       Alert.alert('Erro', 'Não foi possível carregar os pets.');
     }
-  };
+  }, []);
+
+  // Recarrega dados sempre que a tela ganha foco ou o usuário muda
+  useFocusEffect(
+    useCallback(() => {
+      loadServices();
+      if (currentUser?.uID) {
+        loadPets(currentUser.uID);
+      }
+    }, [currentUser, loadServices, loadPets])
+  );
 
   // Lógica de Filtragem (Memorizada para performance)
   const filteredServices = useMemo(() => {
@@ -75,7 +81,7 @@ export const useServicesViewModel = () => {
     return services.filter((s) => {
       const name = s.name.toLowerCase();
       if (activeFilter === 'bath') {
-        return name.includes('banho') || name.includes('tosa');
+        return name.includes('banho') || name.includes('tosa') || name.includes('hidratação');
       }
       if (activeFilter === 'health') {
         return ['consulta', 'exame', 'raio', 'cirurgia', 'ultrassonografia'].some((term) => 
@@ -89,12 +95,12 @@ export const useServicesViewModel = () => {
   // Categorias para exibição na View
   const displayExams = useMemo(() => 
     filteredServices.filter((s) =>
-      ['consulta', 'exame', 'raio', 'cirurgia'].some((t) => s.name.toLowerCase().includes(t))
+      ['consulta', 'exame', 'raio', 'cirurgia', 'Ultrassonografia'].some((t) => s.name.toLowerCase().includes(t))
     ), [filteredServices]);
 
   const displayBath = useMemo(() => 
     filteredServices.filter((s) =>
-      ['banho', 'tosa'].some((t) => s.name.toLowerCase().includes(t))
+      ['banho', 'tosa', 'hidratação'].some((t) => s.name.toLowerCase().includes(t))
     ), [filteredServices]);
 
   // Ações da View

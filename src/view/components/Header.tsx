@@ -22,11 +22,10 @@ const Header: React.FC<HeaderProps> = ({
         <Text style={styles.greeting}>Olá, {userName}</Text>
         <TouchableOpacity
           style={styles.notificationButton}
-          onPress={onNotificationPress}
         >
           <Ionicons name="notifications-outline" size={24} color="#333"/>
           <View style={styles.badge}>
-            <Text style={styles.badgeText}>N</Text>
+            <Text style={styles.badgeText}>0</Text>
           </View>
         </TouchableOpacity>
       </View>
